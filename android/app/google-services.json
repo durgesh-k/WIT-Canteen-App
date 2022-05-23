@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "117502131051",
+    "project_id": "wit-canteen-app",
+    "storage_bucket": "wit-canteen-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:117502131051:android:9f5e62fa6614f048846a2e",
+        "android_client_info": {
+          "package_name": "com.example.wit_canteen_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "117502131051-cfg4afs45480nmc6f5031eaj46oqeqvd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.wit_canteen_app",
+            "certificate_hash": "355cc4d751db95dd5afbe8c031af67e53de60da1"
+          }
+        },
+        {
+          "client_id": "117502131051-r9n5gshf6ju50qaq1qiaqr3n2dtmvkku.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALEoD9umM3Tebsh-xFQkdVgZq55q3nCgQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "117502131051-r9n5gshf6ju50qaq1qiaqr3n2dtmvkku.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
