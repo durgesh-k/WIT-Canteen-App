@@ -26,7 +26,7 @@ class _ChooseState extends State<Choose> {
                     colorFilter: ColorFilter.mode(
                         Colors.black.withOpacity(0.2), BlendMode.srcOver),
                     fit: BoxFit.cover,
-                    image: AssetImage('assets/onboard.jpg'))),
+                    image: AssetImage('assets/images/idli.jpg'))),
           ),
           Container(
             height: getHeight(context) * 0.4,
@@ -59,6 +59,9 @@ class _ChooseState extends State<Choose> {
                                   color: Colors.black.withOpacity(0.1)),
                               borderRadius: BorderRadius.circular(100)),
                           onPressed: () {
+                            setState(() {
+                              userType = 'student';
+                            });
                             Navigator.pushAndRemoveUntil(
                                 context,
                                 PageTransition(
@@ -97,13 +100,16 @@ class _ChooseState extends State<Choose> {
                                   color: Colors.black.withOpacity(0.1)),
                               borderRadius: BorderRadius.circular(100)),
                           onPressed: () {
+                            setState(() {
+                              userType = 'teacher';
+                            });
                             Navigator.pushAndRemoveUntil(
                                 context,
                                 PageTransition(
                                     duration: Duration(milliseconds: 200),
                                     curve: Curves.bounceInOut,
                                     type: PageTransitionType.rightToLeft,
-                                    child: Choose()),
+                                    child: Login()),
                                 (route) => false);
                           },
                           color: Colors.white,

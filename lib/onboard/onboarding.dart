@@ -26,7 +26,7 @@ class _OnBoardingState extends State<OnBoarding> {
                     colorFilter: ColorFilter.mode(
                         Colors.black.withOpacity(0.2), BlendMode.srcOver),
                     fit: BoxFit.cover,
-                    image: AssetImage('assets/onboard.jpg'))),
+                    image: AssetImage('assets/images/samosa.jpg'))),
           ),
           Container(
             height: getHeight(context) * 0.4,

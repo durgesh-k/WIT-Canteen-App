@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -11,7 +12,13 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text('hello'),
+      body: Column(
+        children: [
+          Text('hello'),
+          Text(FirebaseAuth.instance.currentUser!.displayName!),
+          Text(FirebaseAuth.instance.currentUser!.email!),
+        ],
+      ),
     );
   }
 }

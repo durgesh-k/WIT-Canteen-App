@@ -39,6 +39,9 @@ dependencies:
   page_transition: ^2.0.4
   provider: ^5.0.0
   fluttertoast: ^8.0.9
+  mobile_number_picker: ^0.0.1+5
+  permission_handler: ^9.2.0
+  file_picker: ^4.1.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -73,6 +76,8 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/
+    - assets/images/
+    - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:wit_canteen_app/auth/auth_backend.dart';
 import 'package:wit_canteen_app/auth/google_sign_in.dart';
 import 'package:wit_canteen_app/auth/login.dart';
+import 'package:wit_canteen_app/auth/verify_email.dart';
 import 'package:wit_canteen_app/components.dart';
 import 'package:wit_canteen_app/globals.dart';
 import 'package:wit_canteen_app/screens/home.dart';
@@ -29,8 +31,9 @@ class _SignUpState extends State<SignUp> {
   double opacity = 0.0;
   double nameOpacity = 0.0;
   double emailOpacity = 0.0;
-  double passOpacity = 0.0;
+  double enrolOpacity = 0.0;
   String msg = '';
+  String? _class;
   final signupkey = GlobalKey<FormState>();
   bool loading = false;
 
@@ -213,7 +216,7 @@ class _SignUpState extends State<SignUp> {
                 const SizedBox(
                   height: 14,
                 ),
-                TextFormField(
+                /*TextFormField(
                   obscureText: _obscureText2,
                   controller: password,
                   validator: (String? value) {
@@ -296,6 +299,112 @@ class _SignUpState extends State<SignUp> {
                       color: Colors.black.withOpacity(0.3),
                     ),
                   ),
+                ),*/
+                TextFormField(
+                  controller: enrol,
+                  validator: (String? value) {
+                    if (value!.isEmpty) {
+                      setState(() {
+                        opacity = 1.0;
+                        enrolOpacity = 1.0;
+                        msg = 'Enrollment no. is required';
+                      });
+                      return null;
+                      //return 'Email is required';
+                    }
+                    setState(() {
+                      enrolOpacity = 0.0;
+                      //opacity = 0.0;
+                    });
+                    return null;
+                  },
+                  inputFormatters: [FilteringTextInputFormatter.deny(' ')],
+                  style: const TextStyle(
+                    fontFamily: "SemiBold",
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                  decoration: InputDecoration(
+                    focusColor: Colors.black,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(100.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(100),
+                      borderSide:
+                          BorderSide(width: 0.0, color: Colors.grey.shade50),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide:
+                          BorderSide(width: 10.0, color: Colors.grey.shade100),
+                    ),
+                    filled: true,
+                    fillColor: Colors.black.withOpacity(0.05),
+                    prefixIcon: Icon(
+                      Icons.error,
+                      size: 15,
+                      color: Colors.red.withOpacity(emailOpacity),
+                    ),
+                    //labelText: "Email",
+                    hintText: 'Enrollment No.',
+                    hintStyle: TextStyle(
+                      fontFamily: "SemiBold",
+                      fontSize: 14, //16,
+                      color: Colors.black.withOpacity(0.3),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 14,
+                ),
+                Container(
+                  height: 54,
+                  width: getWidth(context),
+                  decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(100)),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 50.0),
+                    child: DropdownButton<String>(
+                      value: _class,
+                      icon: Container(),
+                      underline: Container(),
+                      borderRadius: BorderRadius.circular(20),
+                      hint: Text(
+                        'Choose Class ',
+                        style: TextStyle(
+                          fontFamily: "SemiBold",
+                          fontSize: 14, //16,
+                          color: Colors.black.withOpacity(0.3),
+                        ),
+                      ),
+                      items: <String>[
+                        'TY-CSE-A',
+                        'TY-CSE-B',
+                        'TY-IT',
+                        'TY-ENTC-A',
+                        'TY-ENTC-B'
+                      ].map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: const TextStyle(
+                              fontFamily: "SemiBold",
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _class = value;
+                        });
+                      },
+                    ),
+                  ),
                 ),
                 const SizedBox(
                   height: 10,
@@ -327,49 +436,71 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
                 SizedBox(
-                  height: getHeight(context) * 0.18,
+                  height: getHeight(context) * 0.12,
                 ),
                 MaterialButton(
                     elevation: 0,
                     splashColor: Colors.black.withOpacity(0.3),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(100)),
-                    onPressed: () {
-                      if (signupkey.currentState!.validate()) {
-                        if (nameOpacity == 0.0 &&
-                            emailOpacity == 0.0 &&
-                            passOpacity == 0.0) {
-                          setState(() {
-                            opacity = 0.0;
-                            loading = true;
-                          });
-                        } else {
-                          createAccount(
-                                  email.text, password.text, password.text)
-                              .then((user) async {
-                            await user!.updateDisplayName(name.text);
-                            if (user != null) {
+                    onPressed: () async {
+                      if (_class == null) {
+                        setState(() {
+                          msg = 'Please choose you class';
+                          opacity = 1.0;
+                        });
+                      } else {
+                        if (signupkey.currentState!.validate()) {
+                          if (nameOpacity == 0.0 &&
+                              emailOpacity == 0.0 &&
+                              enrolOpacity == 0.0) {
+                            setState(() {
+                              opacity = 0.0;
+                              loading = true;
+                            });
+
+                            await FirebaseAuth.instance.currentUser!
+                                .updateDisplayName(name.text);
+                            await FirebaseAuth.instance.currentUser!
+                                .updateEmail(email.text);
+                            if (FirebaseAuth.instance.currentUser != null) {
                               setState(() {
                                 loading = false;
                               });
+                              await FirebaseFirestore.instance
+                                  .collection('Students')
+                                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                                  .update({
+                                'email': email.text,
+                                'name': name.text,
+                                'enrollment': enrol.text,
+                                'class': _class
+                              });
                               print(FirebaseAuth
                                   .instance.currentUser!.displayName);
+                              await FirebaseAuth.instance.currentUser!
+                                  .sendEmailVerification();
+                              setState(() {
+                                loading = false;
+                              });
                               Navigator.pushAndRemoveUntil(
                                   context,
                                   PageTransition(
                                       duration: Duration(milliseconds: 200),
                                       curve: Curves.bounceInOut,
                                       type: PageTransitionType.rightToLeft,
-                                      child: Home()),
+                                      child: VerifyEmail()),
                                   (route) => false);
-                              //showToast('Account Created');
-                            } else {
-                              setState(() {
-                                loading = false;
-                              });
-                              //showToast('Account Creation failed');
+                              showToast('Account Created');
                             }
-                          });
+                          } else {
+                            setState(() {
+                              loading = false;
+                            });
+                            showToast('Account Creation failed');
+                          }
+                          /*createAccount(email.text, 'Qwerty!123', 'Qwerty!123')
+                              .then((user) async {});*/
                         }
                       }
                     },
@@ -401,10 +532,10 @@ class _SignUpState extends State<SignUp> {
                         ],
                       ),
                     )),
-                const SizedBox(
+                /*const SizedBox(
                   height: 10,
-                ),
-                MaterialButton(
+                ),*/
+                /* MaterialButton(
                     elevation: 0,
                     splashColor: Colors.black.withOpacity(0.3),
                     shape: RoundedRectangleBorder(
@@ -442,7 +573,7 @@ class _SignUpState extends State<SignUp> {
                         children: [
                           //Spacer(),
                           SvgPicture.asset(
-                            'assets/google.svg',
+                            'assets/icons/google.svg',
                             height: 18,
                           ),
                           SizedBox(
@@ -464,7 +595,7 @@ class _SignUpState extends State<SignUp> {
                                 ),
                         ],
                       ),
-                    )),
+                    )),*/
                 SizedBox(
                   height: 10,
                 ),
@@ -483,10 +614,21 @@ class _SignUpState extends State<SignUp> {
                     ),
                     InkWell(
                       onTap: () {
+                        setState(() {
+                          processType = 'login';
+                        });
                         Navigator.pushAndRemoveUntil(
                             context,
-                            MaterialPageRoute(builder: (context) => Login()),
+                            PageTransition(
+                                duration: Duration(milliseconds: 200),
+                                curve: Curves.bounceInOut,
+                                type: PageTransitionType.leftToRight,
+                                child: Login()),
                             (route) => false);
+                        /*Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => Login()),
+                            (route) => false);*/
                       },
                       child: Container(
                         height: 40,

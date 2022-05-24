@@ -9,12 +9,18 @@ double getWidth(BuildContext context) {
   return MediaQuery.of(context).size.width;
 }
 
+String? userType;
+String? processType;
+
 //const color = Color(0xFFE8460A);
 var color = Colors.orange.shade900;
+var color2 = Colors.black.withOpacity(0.05);
 bool googleloading = false;
+bool isVerified = false;
 
 TextEditingController name = TextEditingController();
 TextEditingController email = TextEditingController();
+TextEditingController enrol = TextEditingController();
 TextEditingController password = TextEditingController();
 
 void showToast(String? str) {
