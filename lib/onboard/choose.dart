@@ -62,14 +62,13 @@ class _ChooseState extends State<Choose> {
                             setState(() {
                               userType = 'student';
                             });
-                            Navigator.pushAndRemoveUntil(
+                            Navigator.push(
                                 context,
                                 PageTransition(
                                     duration: Duration(milliseconds: 200),
                                     curve: Curves.bounceInOut,
                                     type: PageTransitionType.rightToLeft,
-                                    child: Login()),
-                                (route) => false);
+                                    child: Login()));
                           },
                           color: Colors.white,
                           padding: EdgeInsets.symmetric(horizontal: 0.0),
@@ -103,14 +102,13 @@ class _ChooseState extends State<Choose> {
                             setState(() {
                               userType = 'teacher';
                             });
-                            Navigator.pushAndRemoveUntil(
+                            Navigator.push(
                                 context,
                                 PageTransition(
                                     duration: Duration(milliseconds: 200),
                                     curve: Curves.bounceInOut,
                                     type: PageTransitionType.rightToLeft,
-                                    child: Login()),
-                                (route) => false);
+                                    child: Login()));
                           },
                           color: Colors.white,
                           padding: EdgeInsets.symmetric(horizontal: 0.0),

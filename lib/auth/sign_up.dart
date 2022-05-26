@@ -301,13 +301,15 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),*/
                 TextFormField(
-                  controller: enrol,
+                  controller: unique,
                   validator: (String? value) {
                     if (value!.isEmpty) {
                       setState(() {
                         opacity = 1.0;
                         enrolOpacity = 1.0;
-                        msg = 'Enrollment no. is required';
+                        msg = userType == 'teacher'
+                            ? 'PAN no. is required'
+                            : 'Enrollment no. is required';
                       });
                       return null;
                       //return 'Email is required';
@@ -347,7 +349,8 @@ class _SignUpState extends State<SignUp> {
                       color: Colors.red.withOpacity(emailOpacity),
                     ),
                     //labelText: "Email",
-                    hintText: 'Enrollment No.',
+                    hintText:
+                        userType == 'teacher' ? 'Pan No.' : 'Enrollment No.',
                     hintStyle: TextStyle(
                       fontFamily: "SemiBold",
                       fontSize: 14, //16,
@@ -358,54 +361,103 @@ class _SignUpState extends State<SignUp> {
                 const SizedBox(
                   height: 14,
                 ),
-                Container(
-                  height: 54,
-                  width: getWidth(context),
-                  decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(100)),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 50.0),
-                    child: DropdownButton<String>(
-                      value: _class,
-                      icon: Container(),
-                      underline: Container(),
-                      borderRadius: BorderRadius.circular(20),
-                      hint: Text(
-                        'Choose Class ',
-                        style: TextStyle(
-                          fontFamily: "SemiBold",
-                          fontSize: 14, //16,
-                          color: Colors.black.withOpacity(0.3),
+                userType == 'teacher'
+                    ? Container(
+                        height: 54,
+                        width: getWidth(context),
+                        decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(100)),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 50.0),
+                          child: DropdownButton<String>(
+                            value: _class,
+                            icon: Container(),
+                            underline: Container(),
+                            borderRadius: BorderRadius.circular(20),
+                            hint: Text(
+                              'Choose Department ▼',
+                              style: TextStyle(
+                                fontFamily: "SemiBold",
+                                fontSize: 14, //16,
+                                color: Colors.black.withOpacity(0.3),
+                              ),
+                            ),
+                            items: <String>[
+                              'CSE',
+                              'IT',
+                              'ENTC',
+                              'MECH',
+                              'Office'
+                            ].map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: const TextStyle(
+                                    fontFamily: "SemiBold",
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _class = value;
+                              });
+                            },
+                          ),
+                        ),
+                      )
+                    : Container(
+                        height: 54,
+                        width: getWidth(context),
+                        decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(100)),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 50.0),
+                          child: DropdownButton<String>(
+                            value: _class,
+                            icon: Container(),
+                            underline: Container(),
+                            borderRadius: BorderRadius.circular(20),
+                            hint: Text(
+                              'Choose Class ▼',
+                              style: TextStyle(
+                                fontFamily: "SemiBold",
+                                fontSize: 14, //16,
+                                color: Colors.black.withOpacity(0.3),
+                              ),
+                            ),
+                            items: <String>[
+                              'TY-CSE-A',
+                              'TY-CSE-B',
+                              'TY-IT',
+                              'TY-ENTC-A',
+                              'TY-ENTC-B'
+                            ].map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: const TextStyle(
+                                    fontFamily: "SemiBold",
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _class = value;
+                              });
+                            },
+                          ),
                         ),
                       ),
-                      items: <String>[
-                        'TY-CSE-A',
-                        'TY-CSE-B',
-                        'TY-IT',
-                        'TY-ENTC-A',
-                        'TY-ENTC-B'
-                      ].map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(
-                            value,
-                            style: const TextStyle(
-                              fontFamily: "SemiBold",
-                              fontSize: 16,
-                              color: Colors.black,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _class = value;
-                        });
-                      },
-                    ),
-                  ),
-                ),
                 const SizedBox(
                   height: 10,
                 ),
@@ -450,57 +502,65 @@ class _SignUpState extends State<SignUp> {
                           opacity = 1.0;
                         });
                       } else {
-                        if (signupkey.currentState!.validate()) {
-                          if (nameOpacity == 0.0 &&
-                              emailOpacity == 0.0 &&
-                              enrolOpacity == 0.0) {
-                            setState(() {
-                              opacity = 0.0;
-                              loading = true;
-                            });
+                        try {
+                          if (signupkey.currentState!.validate()) {
+                            if (nameOpacity == 0.0 &&
+                                emailOpacity == 0.0 &&
+                                enrolOpacity == 0.0) {
+                              setState(() {
+                                opacity = 0.0;
+                                loading = true;
+                              });
 
-                            await FirebaseAuth.instance.currentUser!
-                                .updateDisplayName(name.text);
-                            await FirebaseAuth.instance.currentUser!
-                                .updateEmail(email.text);
-                            if (FirebaseAuth.instance.currentUser != null) {
-                              setState(() {
-                                loading = false;
-                              });
-                              await FirebaseFirestore.instance
-                                  .collection('Students')
-                                  .doc(FirebaseAuth.instance.currentUser!.uid)
-                                  .update({
-                                'email': email.text,
-                                'name': name.text,
-                                'enrollment': enrol.text,
-                                'class': _class
-                              });
-                              print(FirebaseAuth
-                                  .instance.currentUser!.displayName);
                               await FirebaseAuth.instance.currentUser!
-                                  .sendEmailVerification();
+                                  .updateDisplayName(name.text);
+                              await FirebaseAuth.instance.currentUser!
+                                  .updateEmail(email.text);
+                              if (FirebaseAuth.instance.currentUser != null) {
+                                setState(() {
+                                  loading = false;
+                                });
+                                await FirebaseFirestore.instance
+                                    .collection('Users')
+                                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                                    .update({
+                                  'email': email.text,
+                                  'name': name.text,
+                                  'uniqueNumber': unique.text,
+                                  'class': _class,
+                                  'userType': userType
+                                });
+                                print(FirebaseAuth
+                                    .instance.currentUser!.displayName);
+                                await FirebaseAuth.instance.currentUser!
+                                    .sendEmailVerification();
+                                setState(() {
+                                  loading = false;
+                                });
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    PageTransition(
+                                        duration: Duration(milliseconds: 200),
+                                        curve: Curves.bounceInOut,
+                                        type: PageTransitionType.rightToLeft,
+                                        child: VerifyEmail()),
+                                    (route) => false);
+                                showToast('Account Created');
+                              }
+                            } else {
                               setState(() {
                                 loading = false;
                               });
-                              Navigator.pushAndRemoveUntil(
-                                  context,
-                                  PageTransition(
-                                      duration: Duration(milliseconds: 200),
-                                      curve: Curves.bounceInOut,
-                                      type: PageTransitionType.rightToLeft,
-                                      child: VerifyEmail()),
-                                  (route) => false);
-                              showToast('Account Created');
+                              showToast('Account Creation failed');
                             }
-                          } else {
-                            setState(() {
-                              loading = false;
-                            });
-                            showToast('Account Creation failed');
                           }
                           /*createAccount(email.text, 'Qwerty!123', 'Qwerty!123')
                               .then((user) async {});*/
+                        } catch (e) {
+                          showToast('Please check your details and try again');
+                          setState(() {
+                            loading = false;
+                          });
                         }
                       }
                     },

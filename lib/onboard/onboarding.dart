@@ -63,14 +63,13 @@ class _OnBoardingState extends State<OnBoarding> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(100)),
                       onPressed: () {
-                        Navigator.pushAndRemoveUntil(
+                        Navigator.push(
                             context,
                             PageTransition(
                                 duration: Duration(milliseconds: 200),
                                 curve: Curves.bounceInOut,
                                 type: PageTransitionType.rightToLeft,
-                                child: Choose()),
-                            (route) => false);
+                                child: Choose()));
                       },
                       color: color,
                       padding: EdgeInsets.symmetric(horizontal: 0.0),

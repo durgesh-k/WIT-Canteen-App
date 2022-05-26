@@ -52,7 +52,7 @@ class _IDuploadState extends State<IDupload> {
         }
         try {
           await FirebaseFirestore.instance
-              .collection('Students')
+              .collection('Users')
               .doc(FirebaseAuth.instance.currentUser!.uid)
               .update({'id': downloadUrl});
           showToast("Document uploaded");
@@ -187,17 +187,18 @@ class _IDuploadState extends State<IDupload> {
                       });
                       try {
                         var userDoc = await FirebaseFirestore.instance
-                            .collection("Students")
+                            .collection("Users")
                             .where('id', isEqualTo: downloadUrl)
                             .get();
                         if (userDoc.docs.length == 1) {
-                          Navigator.push(
+                          Navigator.pushAndRemoveUntil(
                             context,
                             PageTransition(
                                 duration: Duration(milliseconds: 400),
                                 curve: Curves.bounceInOut,
                                 type: PageTransitionType.rightToLeft,
                                 child: Home()),
+                            ((route) => false),
                           );
                           showToast("You're now signed up");
                         } else {

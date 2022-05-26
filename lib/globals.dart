@@ -20,7 +20,7 @@ bool isVerified = false;
 
 TextEditingController name = TextEditingController();
 TextEditingController email = TextEditingController();
-TextEditingController enrol = TextEditingController();
+TextEditingController unique = TextEditingController();
 TextEditingController password = TextEditingController();
 
 void showToast(String? str) {
