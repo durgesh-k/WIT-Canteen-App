@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange),
         ),
-        home: OnBoarding(),
+        home: Authenticate(),
       ),
     );
   }
