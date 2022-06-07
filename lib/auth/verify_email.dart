@@ -25,13 +25,21 @@ class _VerifyEmailState extends State<VerifyEmail> {
     });
     if (isVerified) {
       showToast('Email Verified');
+      // Navigator.pushAndRemoveUntil(
+      //     context,
+      //     PageTransition(
+      //         duration: Duration(milliseconds: 200),
+      //         curve: Curves.bounceInOut,
+      //         type: PageTransitionType.rightToLeft,
+      //         child: IDupload()),
+      //     (route) => false);
       Navigator.pushAndRemoveUntil(
           context,
           PageTransition(
               duration: Duration(milliseconds: 200),
               curve: Curves.bounceInOut,
               type: PageTransitionType.rightToLeft,
-              child: IDupload()),
+              child: Home()),
           (route) => false);
     }
   }

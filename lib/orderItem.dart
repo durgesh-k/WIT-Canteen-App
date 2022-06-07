@@ -1,132 +1,176 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:wit_canteen_app/globals.dart';
 
-class OrderItem extends StatelessWidget {
+class OrderItem extends StatefulWidget {
   //const MenuCard({ Key? key }) : super(key: key);
   final String img;
   final String itemName;
   final String price;
-  OrderItem(
-    this.itemName,
-    this.price,
-    this.img,
-  );
+  final String id;
+  final int quantity;
+  OrderItem(this.itemName, this.price, this.img, this.id, this.quantity);
 
   @override
+  State<OrderItem> createState() => _OrderItemState();
+}
+
+class _OrderItemState extends State<OrderItem> {
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 100,
-      width: 525,
-      padding: const EdgeInsets.only(top: 8, right: 15, bottom: 5),
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Row(
-        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            margin: EdgeInsets.only(left: 15),
-            child: Column(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 8),
-                  height: 70,
-                  width: 65,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(img),
-                      fit: BoxFit.fill,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(25)),
+    return Row(
+      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          child: Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                height: getHeight(context) * 0.09,
+                width: getHeight(context) * 0.09,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(widget.img),
+                    fit: BoxFit.cover,
                   ),
+                  borderRadius: BorderRadius.all(Radius.circular(28)),
                 ),
-                const SizedBox(height: 5),
-              ],
-            ),
+              ),
+              const SizedBox(height: 5),
+            ],
           ),
-          const SizedBox(width: 30),
-          Container(
-            padding: const EdgeInsets.only(top: 15, bottom: 15),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.58,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        itemName,
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      //SizedBox(width: 145),
-                      Text(
-                        price,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 191, 188, 188)),
-                      ),
-                    ],
-                  ),
-                ),
-                Row(
+        ),
+        const SizedBox(width: 30),
+        Container(
+          padding: const EdgeInsets.only(top: 15, bottom: 15),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width * 0.58,
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      price,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                    ),
-                    SizedBox(width: 120),
-                    Container(
-                      decoration: const BoxDecoration(
-                          color: Color(0xFFE8460E),
-                          borderRadius: BorderRadius.all(Radius.circular(7))),
-                      //padding: const EdgeInsets.all(1),
-                      //margin: const EdgeInsets.symmetric(horizontal: 3),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          '-',
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        ),
+                      widget.itemName,
+                      style: TextStyle(
+                        fontFamily: 'SemiBold',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
                       ),
                     ),
-                    SizedBox(width: 15),
-                    Text('2'),
-                    SizedBox(width: 15),
-                    Container(
-                      decoration: const BoxDecoration(
-                          color: Color(0xFFE8460E),
-                          borderRadius: BorderRadius.all(Radius.circular(7))),
-                      //padding: const EdgeInsets.all(1),
-                      //margin: const EdgeInsets.symmetric(horizontal: 3),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          '+',
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        ),
-                      ),
-                    ),
+                    //SizedBox(width: 145),
                   ],
                 ),
-              ],
-            ),
-          )
-        ],
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(15)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 0,
-            blurRadius: 0.5,
-            offset: Offset(2, 5), // changes position of shadow
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '₹ ${widget.price}',
+                    style: TextStyle(
+                        fontFamily: 'Medium',
+                        fontSize: 22,
+                        color: Colors.black.withOpacity(0.7),
+                        fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(width: 120),
+                  InkWell(
+                    onTap: () async {
+                      int prev = widget.quantity;
+                      await FirebaseFirestore.instance
+                          .collection('Carts')
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .collection('Items')
+                          .doc(widget.id)
+                          .update({'quantity': FieldValue.increment(-1)});
+                      try {
+                        await FirebaseFirestore.instance
+                            .collection('Carts')
+                            .doc(FirebaseAuth.instance.currentUser!.uid)
+                            .collection('Sum')
+                            .doc('0')
+                            .update({
+                          'sum': FieldValue.increment(-int.parse(widget.price))
+                        });
+                      } catch (e) {}
+
+                      if (prev == 1) {
+                        FirebaseFirestore.instance
+                            .collection('Carts')
+                            .doc(FirebaseAuth.instance.currentUser!.uid)
+                            .collection('Items')
+                            .doc(widget.id)
+                            .delete();
+                        FirebaseFirestore.instance
+                            .collection('Carts')
+                            .doc(FirebaseAuth.instance.currentUser!.uid)
+                            .collection('Sum')
+                            .doc('0')
+                            .delete();
+                        showToast('Removed ${widget.itemName} from cart');
+                      }
+                    },
+                    child: Container(
+                      decoration: const BoxDecoration(
+                          color: Color(0xFFE8460E),
+                          borderRadius: BorderRadius.all(Radius.circular(17))),
+                      child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Icon(
+                            Icons.remove,
+                            size: 18,
+                            color: Colors.white,
+                          )),
+                    ),
+                  ),
+                  SizedBox(width: 15),
+                  Text(widget.quantity.toString(),
+                      style: TextStyle(
+                          fontFamily: 'Medium',
+                          fontSize: 22,
+                          color: Colors.black.withOpacity(0.6),
+                          fontWeight: FontWeight.w500)),
+                  SizedBox(width: 15),
+                  InkWell(
+                    onTap: () async {
+                      await FirebaseFirestore.instance
+                          .collection('Carts')
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .collection('Items')
+                          .doc(widget.id)
+                          .update({'quantity': FieldValue.increment(1)});
+                      await FirebaseFirestore.instance
+                          .collection('Carts')
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .collection('Sum')
+                          .doc('0')
+                          .update({
+                        'sum': FieldValue.increment(int.parse(widget.price))
+                      });
+                    },
+                    child: Container(
+                      decoration: const BoxDecoration(
+                          color: Color(0xFFE8460E),
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
+                      child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Icon(
+                            Icons.add,
+                            size: 18,
+                            color: Colors.white,
+                          )),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
-      ),
+        )
+      ],
     );
   }
 }

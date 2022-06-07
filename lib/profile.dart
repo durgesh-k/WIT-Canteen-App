@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wit_canteen_app/auth/auth_backend.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -79,22 +80,27 @@ class ProfilePage extends StatelessWidget {
             Container(
               padding:
                   EdgeInsets.only(top: 25, left: 35, right: 35, bottom: 25),
-              child: const Text(
+              child: Text(
                   '_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ ',
                   style: TextStyle(color: Color.fromARGB(255, 189, 187, 187))),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 35),
+              padding: EdgeInsets.only(left: 35),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text('Order History',
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 20),
                   Text('About', style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 20),
-                  Text('Log Out',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  InkWell(
+                    onTap: () {
+                      logOut(context);
+                    },
+                    child: Text('Log Out',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
                   SizedBox(height: 280),
                   Text('WIT COLLEGE',
                       style: TextStyle(

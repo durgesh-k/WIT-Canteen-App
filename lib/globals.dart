@@ -18,6 +18,9 @@ var color2 = Colors.black.withOpacity(0.05);
 bool googleloading = false;
 bool isVerified = false;
 
+TimeOfDay selectedTime = TimeOfDay.now();
+int count = 0;
+
 TextEditingController name = TextEditingController();
 TextEditingController email = TextEditingController();
 TextEditingController unique = TextEditingController();

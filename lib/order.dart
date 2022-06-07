@@ -1,16 +1,87 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hotreloader/hotreloader.dart';
+import 'package:wit_canteen_app/globals.dart';
 import 'package:wit_canteen_app/orderItem.dart';
 import 'package:wit_canteen_app/priceBoard.dart';
 
-class OrderPage extends StatelessWidget {
+class OrderPage extends StatefulWidget {
   const OrderPage({Key? key}) : super(key: key);
+
+  @override
+  State<OrderPage> createState() => _OrderPageState();
+}
+
+class _OrderPageState extends State<OrderPage> {
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked_s = await showTimePicker(
+        context: context,
+        initialTime: selectedTime,
+        builder: (BuildContext context, Widget? child) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+            child: child!,
+          );
+        });
+
+    if (picked_s != null && picked_s != selectedTime)
+      setState(() {
+        selectedTime = picked_s;
+      });
+  }
+
+  int subtotal = 0;
+  void getSub() {
+    var doc = FirebaseFirestore.instance
+        .collection('Carts')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('Sum')
+        .doc('0')
+        .get()
+        .then((value) {
+      setState(() {
+        //subtotal = value.data()!['sum'];
+        loading = false;
+      });
+    });
+  }
+
+  Future<void> getSum() async {
+    var docs = await FirebaseFirestore.instance
+        .collection('Carts')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('Items')
+        .get();
+    docs.docs.forEach((element) async {
+      int value = int.parse(element.data()["price"]);
+      subtotal = subtotal + value;
+      loading = false;
+    });
+  }
+
+  bool? loading = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    try {
+      getSum();
+    } catch (e) {
+      setState(() {
+        loading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
-          'MY ORDER',
+          ' ',
           textAlign: TextAlign.center,
           style: TextStyle(
               color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
@@ -19,37 +90,203 @@ class OrderPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
       ),
-      body: Container(
-        child: Column(
-          children: [
-            OrderItem('Samosa', '₹ 15', 'assets/images/samosa.jpg'),
-            OrderItem('Vadapav', '₹ 15', 'assets/images/vadapav.jpg'),
-            OrderItem('Kachori', '₹ 15', 'assets/images/kachori.jpg'),
-            PriceBoard(),
-            SizedBox(height: 10),
-            Container(
-              decoration: const BoxDecoration(
-                  color: Color(0xFFE8460E),
-                  borderRadius: BorderRadius.all(Radius.circular(15))),
-              padding: const EdgeInsets.all(1),
-              margin: const EdgeInsets.symmetric(horizontal: 3),
-              child: SizedBox(
-                height: 50,
-                width: 370,
-                child: TextButton(
-                  style: ButtonStyle(
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white),
-                  ),
-                  onPressed: () {},
-                  child: const Text(
-                    'Confirm Order',
-                    style: TextStyle(fontSize: 20),
-                  ),
+      body: loading!
+          ? Container(
+              child: Center(
+                  child: Container(
+                      height: 40,
+                      width: 40,
+                      child: CircularProgressIndicator())))
+          : Container(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      FirebaseAuth.instance.currentUser!.displayName!,
+                      style: const TextStyle(
+                        fontFamily: 'SemiBold',
+                        fontSize: 24,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 6,
+                    ),
+                    Text(
+                      FirebaseAuth.instance.currentUser!.phoneNumber!,
+                      style: TextStyle(
+                          fontFamily: 'Medium',
+                          fontSize: 20,
+                          color: Colors.black.withOpacity(0.4)),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      height: 1,
+                      width: getWidth(context),
+                      color: Colors.grey.shade200,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('Carts')
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .collection('Items')
+                          .snapshots(),
+                      builder: ((BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (!snapshot.hasData) return const SizedBox.shrink();
+                        return Container(
+                          height: getHeight(context) * 0.4,
+                          width: getWidth(context),
+                          child: SingleChildScrollView(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (ctx, i) {
+                                Map<String, dynamic> map =
+                                    snapshot.data!.docs[i].data()
+                                        as Map<String, dynamic>;
+
+                                return OrderItem(
+                                    map['product'],
+                                    map['price'].toString(),
+                                    map['image'],
+                                    snapshot.data!.docs[i].id,
+                                    map['quantity']);
+                              },
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Column(children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Subtotal',
+                            style:
+                                TextStyle(fontFamily: 'SemiBold', fontSize: 24),
+                          ),
+                          Text(
+                            subtotal.toString(),
+                            style:
+                                TextStyle(fontFamily: 'SemiBold', fontSize: 20),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: const [
+                          Text(
+                            'Delivery',
+                            style:
+                                TextStyle(fontFamily: 'SemiBold', fontSize: 24),
+                          ),
+                          Text(
+                            'Free',
+                            style:
+                                TextStyle(fontFamily: 'SemiBold', fontSize: 20),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      Container(
+                        height: 1,
+                        width: getWidth(context),
+                        color: Colors.grey.shade200,
+                      ),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('To Pay',
+                              style:
+                                  TextStyle(fontFamily: 'Bold', fontSize: 28)),
+                          Text('₹ ${subtotal}',
+                              style:
+                                  TextStyle(fontFamily: 'Bold', fontSize: 28)),
+                        ],
+                      )
+                    ]),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Pickup time',
+                          style: const TextStyle(
+                              fontFamily: 'SemiBold', fontSize: 24),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            _selectTime(context);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: color2,
+                                borderRadius: BorderRadius.circular(40)),
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 8),
+                                child: Text(
+                                  selectedTime.format(context),
+                                  style: TextStyle(
+                                      fontFamily: 'SemiBold', fontSize: 16),
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
                 ),
               ),
             ),
-          ],
+      bottomNavigationBar: Container(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Row(
+            children: [
+              Container(
+                height: 70,
+                width: getWidth(context) * 0.47,
+              ),
+              Container(
+                  height: 60,
+                  width: getWidth(context) * 0.4,
+                  decoration: const BoxDecoration(
+                      color: Color(0xFFE8460E),
+                      borderRadius: BorderRadius.all(Radius.circular(100))),
+                  child: const Center(
+                    child: Text(
+                      'Place Order',
+                      style: TextStyle(
+                          fontFamily: 'SemiBold',
+                          color: Colors.white,
+                          fontSize: 24),
+                    ),
+                  )),
+            ],
+          ),
         ),
       ),
     );

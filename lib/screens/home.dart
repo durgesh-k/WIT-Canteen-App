@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:wit_canteen_app/globals.dart';
 import 'package:wit_canteen_app/menuGrid.dart';
+import 'package:wit_canteen_app/menuitem.dart';
+import 'package:wit_canteen_app/order.dart';
 import 'package:wit_canteen_app/profile.dart';
 
 class Home extends StatefulWidget {
@@ -79,13 +82,25 @@ class _HomeState extends State<Home> {
                     )
                   ],
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                      color: color2, borderRadius: BorderRadius.circular(80)),
-                  child: Padding(
-                      padding: const EdgeInsets.all(14.0),
-                      child: Icon(Iconsax.shopping_cart) //
-                      ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                          duration: Duration(milliseconds: 200),
+                          curve: Curves.bounceInOut,
+                          type: PageTransitionType.rightToLeft,
+                          child: OrderPage()),
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: color2, borderRadius: BorderRadius.circular(80)),
+                    child: Padding(
+                        padding: const EdgeInsets.all(14.0),
+                        child: Icon(Iconsax.shopping_cart) //
+                        ),
+                  ),
                 ),
               ],
             ),
@@ -130,7 +145,65 @@ class _HomeState extends State<Home> {
               ),
             ),
             SizedBox(
+              height: 20,
+            ),
+            Container(
+              width: getWidth(context),
+              // color: Colors.red,
+              child: Text(
+                "Offers",
+                style: TextStyle(
+                  fontFamily: 'SemiBold',
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            SizedBox(
               height: 10,
+            ),
+            StreamBuilder<QuerySnapshot>(
+              stream:
+                  FirebaseFirestore.instance.collection('Offers').snapshots(),
+              builder: ((BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (!snapshot.hasData) return const SizedBox.shrink();
+                return Container(
+                  height: 100,
+                  child: ListView.builder(
+                      physics: BouncingScrollPhysics(),
+                      itemCount: snapshot.data!.docs.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (ctx, i) {
+                        Map<String, dynamic> map = snapshot.data!.docs[i].data()
+                            as Map<String, dynamic>;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: OfferItem(
+                            img: map['image'],
+                            condition: map['condition'],
+                            percent: map['percent'],
+                          ),
+                        );
+                      }),
+                );
+              }),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+              width: getWidth(context),
+              // color: Colors.red,
+              child: Text(
+                "Menu",
+                style: TextStyle(
+                  fontFamily: 'SemiBold',
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
             ),
             Expanded(child: MenuGrid()),
           ],

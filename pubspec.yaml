@@ -43,6 +43,8 @@ dependencies:
   permission_handler: ^9.2.0
   file_picker: ^4.1.0
   iconsax: ^0.0.8
+  hotreloader: ^3.0.4
+  cashfree_pg: 2.0.8+28
 
 
   # The following adds the Cupertino Icons font to your application.
