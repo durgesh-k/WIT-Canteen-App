@@ -21,6 +21,7 @@ class MenuGrid extends StatelessWidget {
         if (!snapshot.hasData) return const SizedBox.shrink();
         int count = snapshot.data!.docs.length;
         return GridView.count(
+          //physics: NeverScrollableScrollPhysics(),
           crossAxisCount: 2,
           crossAxisSpacing: 18,
           mainAxisSpacing: 18,

@@ -157,17 +157,28 @@ _showModalBottomSheet(context, id, image, name, price) {
                           ),
                           InkWell(
                             onTap: () async {
-                              await FirebaseFirestore.instance
-                                  .collection('Carts')
-                                  .doc(FirebaseAuth.instance.currentUser!.uid)
-                                  .collection('Items')
-                                  .doc(id)
-                                  .set({
-                                'product': name,
-                                'price': price,
-                                'image': image,
-                                'quantity': 1,
-                              });
+                              try {
+                                await FirebaseFirestore.instance
+                                    .collection('Carts')
+                                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                                    .collection('Items')
+                                    .doc(id)
+                                    .update({
+                                  'quantity': FieldValue.increment(1),
+                                });
+                              } catch (e) {
+                                await FirebaseFirestore.instance
+                                    .collection('Carts')
+                                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                                    .collection('Items')
+                                    .doc(id)
+                                    .set({
+                                  'product': name,
+                                  'price': price,
+                                  'image': image,
+                                  'quantity': 1,
+                                });
+                              }
 
                               showToast('$name added to cart');
                               try {
