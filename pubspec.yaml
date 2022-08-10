@@ -47,6 +47,11 @@ dependencies:
   cashfree_pg: 2.0.8+28
   badges: ^2.0.3
   url_launcher: ^6.1.2
+  animated_check: ^1.0.5
+  image_picker: ^0.8.5+3
+  flutter_advanced_drawer: ^1.2.3+1
+  figma_squircle: ^0.5.3
+  carousel_slider: ^4.1.1
 
 
   # The following adds the Cupertino Icons font to your application.

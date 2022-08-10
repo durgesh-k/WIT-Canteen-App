@@ -21,7 +21,8 @@ bool isVerified = false;
 String? getClassandId = '';
 String? initiatedOrder;
 
-TimeOfDay selectedTime = TimeOfDay.now();
+TimeOfDay selectedTime =
+    TimeOfDay.fromDateTime(DateTime.now().add(Duration(minutes: 30)));
 int count = 0;
 
 TextEditingController name = TextEditingController();

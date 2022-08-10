@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
           ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
             return Container();
           };
-          print(FirebaseAuth.instance.currentUser!.uid);
+          //print(FirebaseAuth.instance.currentUser!.uid);
           return widget!;
         },
         theme: ThemeData(

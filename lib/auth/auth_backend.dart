@@ -4,6 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:wit_canteen_app/auth/google_sign_in.dart';
 import 'package:wit_canteen_app/auth/login.dart';
+import 'package:wit_canteen_app/onboard/onboarding.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -66,7 +67,7 @@ Future logOut(BuildContext context) async {
       await _auth.signOut().then((value) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Login()),
+          MaterialPageRoute(builder: (context) => OnBoarding()),
         );
       });
     }

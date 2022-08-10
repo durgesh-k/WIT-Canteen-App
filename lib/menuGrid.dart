@@ -23,9 +23,9 @@ class MenuGrid extends StatelessWidget {
         return GridView.count(
           //physics: NeverScrollableScrollPhysics(),
           crossAxisCount: 2,
-          crossAxisSpacing: 18,
-          mainAxisSpacing: 18,
-          childAspectRatio: 9 / 12,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 9 / 11.6,
           padding: EdgeInsets.all(5),
           scrollDirection: Axis.vertical,
           shrinkWrap: true,

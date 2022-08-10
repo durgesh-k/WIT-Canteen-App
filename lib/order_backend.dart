@@ -18,7 +18,8 @@ Future<void> pay(BuildContext context, String amount, String cartId) async {
     'time': FieldValue.serverTimestamp(),
     'uid': FirebaseAuth.instance.currentUser!.uid,
     'status': 'CREATED',
-    'pickup_time': selectedTime.format(context)
+    'pickup_time': selectedTime.format(context),
+    'total': amount
   });
   await FirebaseFirestore.instance
       .collection('Orders')
@@ -56,7 +57,8 @@ Future<void> pay(BuildContext context, String amount, String cartId) async {
             'time': FieldValue.serverTimestamp(),
             'uid': FirebaseAuth.instance.currentUser!.uid,
             'status': 'SUCCESS',
-            'pickup_time': selectedTime.format(context)
+            'pickup_time': selectedTime.format(context),
+            'total': amount
           });
           await FirebaseFirestore.instance
               .collection("Carts")
@@ -81,9 +83,26 @@ Future<void> pay(BuildContext context, String amount, String cartId) async {
                     child: OrderSuccess()));
           });
           await FirebaseFirestore.instance
+              .collection('Carts')
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .collection('Items')
+              .get()
+              .then((snapshot) {
+            for (DocumentSnapshot ds in snapshot.docs) {
+              ds.reference.delete();
+            }
+          });
+          await FirebaseFirestore.instance
+              .collection('Carts')
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .collection('Sum')
+              .doc('0')
+              .update({'sum': 0});
+
+          /*await FirebaseFirestore.instance
               .collection("Carts")
               .doc(FirebaseAuth.instance.currentUser!.uid)
-              .delete();
+              .delete();*/
         } else {
           /*ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -126,5 +145,39 @@ Future<String> getAccessToken(num amount, String orderId) async {
       return jsonResponse['cftoken'];
     }
   }
+  return '';
+}
+
+Future<String> cancelOrder(num amount, String orderId) async {
+  print('started');
+  var res = await http.post(
+    Uri.parse("https://test.cashfree.com/api/v1/order/refund"),
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+      'x-client-id': "1733509887cbd3f118d5c96f4c053371",
+      'x-client-secret': "7c5b6a873fad7730fa3bceab3d39ef22cd99e632",
+      'Accept': "application/json",
+      'x-api-version': "2022-01-01"
+    },
+    body: jsonEncode(
+      {
+        "refund_id": '${orderId}',
+        "refund_amount": amount,
+        "refund_note": "refund for order k0v-vK1jv34"
+      },
+    ),
+  );
+  print(res.statusCode);
+  if (res.statusCode == 200) {
+    var jsonResponse = jsonDecode(res.body);
+    if (jsonResponse['status'] == 'OK') {
+      print(jsonResponse);
+    }
+    await FirebaseFirestore.instance
+        .collection("Orders")
+        .doc(orderId)
+        .update({'status': 'CANCELED'});
+  }
+  print('ended');
   return '';
 }

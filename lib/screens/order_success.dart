@@ -1,3 +1,4 @@
+import 'package:animated_check/animated_check.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,9 +13,28 @@ class OrderSuccess extends StatefulWidget {
   State<OrderSuccess> createState() => _OrderSuccessState();
 }
 
-class _OrderSuccessState extends State<OrderSuccess> {
+class _OrderSuccessState extends State<OrderSuccess>
+    with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
+    AnimationController? _animationController =
+        AnimationController(vsync: this, duration: Duration(seconds: 1));
+    Animation<double>? _animation = new Tween<double>(begin: 0, end: 1).animate(
+        new CurvedAnimation(
+            parent: _animationController, curve: Curves.easeInOutCirc));
+
+    /*@override
+    void initState() {
+      super.initState();
+
+      _animationController =
+          AnimationController(vsync: this, duration: Duration(seconds: 1));
+
+      _animation = new Tween<double>(begin: 0, end: 1).animate(
+          new CurvedAnimation(
+              parent: _animationController!, curve: Curves.easeInOutCirc));
+    }*/
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -32,31 +52,55 @@ class _OrderSuccessState extends State<OrderSuccess> {
         height: getHeight(context),
         width: getWidth(context),
         child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Column(
                 children: [
-                  Text(
-                    'Thanks for ordering!',
-                    style: TextStyle(
-                        fontFamily: 'Bold',
-                        fontSize: 34,
-                        color: Colors.black.withOpacity(0.8)),
+                  Container(
+                    height: getHeight(context) * 0.3,
+                    width: getWidth(context) * 0.6,
+                    child: Image.asset(
+                      'assets/images/order_placed.png',
+                      fit: BoxFit.contain,
+                    ),
+                    /*child: AnimatedCheck(
+                    color: color,
+                    progress: _animation,
+                    size: 200,
+                  )*/
+                  ),
+                  SizedBox(
+                    height: getHeight(context) * 0.06,
+                  ),
+                  Container(
+                    width: 250,
+                    child: Text(
+                      'Your order is successfully done',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Bold',
+                          fontSize: 34,
+                          color: Colors.black.withOpacity(0.8)),
+                    ),
                   ),
                   SizedBox(
                     height: 20,
                   ),
-                  Text(
-                    "We'll keep your order ready",
-                    style: TextStyle(
-                        fontFamily: 'Medium',
-                        fontSize: 20,
-                        color: Colors.black.withOpacity(0.2)),
+                  Container(
+                    width: 250,
+                    child: Text(
+                      "You can track your order in the 'orders' section",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Medium',
+                          fontSize: 20,
+                          color: Colors.black.withOpacity(0.2)),
+                    ),
                   ),
                 ],
               ),
-              Column(
+              /*Column(
                 children: [
                   StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
@@ -80,26 +124,29 @@ class _OrderSuccessState extends State<OrderSuccess> {
                             )));
                       return Container(
                         height: getHeight(context) * 0.4,
-                        width: getWidth(context),
-                        child: SingleChildScrollView(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: snapshot.data!.docs.length,
-                            itemBuilder: (ctx, i) {
-                              Map<String, dynamic> map = snapshot.data!.docs[i]
-                                  .data() as Map<String, dynamic>;
+                        width: getWidth(context) * 0.6,
+                        child: Center(
+                          child: SingleChildScrollView(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (ctx, i) {
+                                Map<String, dynamic> map =
+                                    snapshot.data!.docs[i].data()
+                                        as Map<String, dynamic>;
 
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 18.0, vertical: 2),
-                                child: OrderSuccessItem(
-                                    map['product'],
-                                    map['price'].toString(),
-                                    map['image'],
-                                    snapshot.data!.docs[i].id,
-                                    map['quantity']),
-                              );
-                            },
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 18.0, vertical: 2),
+                                  child: OrderSuccessItem(
+                                      map['product'],
+                                      map['price'].toString(),
+                                      map['image'],
+                                      snapshot.data!.docs[i].id,
+                                      map['quantity']),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       );
@@ -117,10 +164,19 @@ class _OrderSuccessState extends State<OrderSuccess> {
                           (route) => false);
                     },
                     child: Container(
-                      child: Text(
-                        '<  Back to home',
-                        style: TextStyle(
-                            fontFamily: 'SemiBold', color: color, fontSize: 20),
+                      decoration: BoxDecoration(
+                          color: color,
+                          borderRadius: BorderRadius.circular(40)),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 18),
+                        child: Text(
+                          '<  Back to home',
+                          style: TextStyle(
+                              fontFamily: 'SemiBold',
+                              color: Colors.white,
+                              fontSize: 14),
+                        ),
                       ),
                     ),
                   ),
@@ -128,7 +184,37 @@ class _OrderSuccessState extends State<OrderSuccess> {
                     height: 40,
                   )
                 ],
-              )
+              )*/
+              SizedBox(
+                height: getHeight(context) * 0.2,
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      PageTransition(
+                          duration: Duration(milliseconds: 200),
+                          curve: Curves.bounceInOut,
+                          type: PageTransitionType.rightToLeft,
+                          child: Home()),
+                      (route) => false);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: color, borderRadius: BorderRadius.circular(40)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 18),
+                    child: Text(
+                      '<  Back to home',
+                      style: TextStyle(
+                          fontFamily: 'SemiBold',
+                          color: Colors.white,
+                          fontSize: 14),
+                    ),
+                  ),
+                ),
+              ),
             ]),
       ),
     );
