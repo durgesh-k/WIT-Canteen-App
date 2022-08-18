@@ -5,8 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hotreloader/hotreloader.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:wit_canteen_app/auth/auth_backend.dart';
 import 'package:wit_canteen_app/globals.dart';
 import 'package:wit_canteen_app/menuGrid.dart';
@@ -22,24 +24,44 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  Animation? notiHeight;
+class _HomeState extends State<Home> with TickerProviderStateMixin {
+  /*Animation? notiHeight;
   Animation? notiWidth;
-  AnimationController? controller;
+  AnimationController? controller;*/
   final _advancedDrawerController = AdvancedDrawerController();
+
+  TabController? _tabController;
+
+  AnimationController? _ColorAnimationController;
+  Animation? _colorTween;
+  ScrollController? _scrollController;
+
+  bool _scrollListener(ScrollNotification scrollInfo) {
+    if (scrollInfo.metrics.axis == Axis.vertical) {
+      _ColorAnimationController!
+          .animateTo(scrollInfo.metrics.pixels / 300); //org-300
+      return true;
+    }
+    return false;
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    controller =
+    _ColorAnimationController =
+        AnimationController(vsync: this, duration: Duration(seconds: 0));
+    _colorTween = ColorTween(begin: Colors.transparent, end: Colors.white)
+        .animate(_ColorAnimationController!);
+    _tabController = TabController(length: 3, vsync: this);
+    /*controller =
         AnimationController(vsync: this, duration: Duration(seconds: 2));
     notiHeight = Tween<double>(begin: 0.0, end: 80.0).animate(controller!);
     notiWidth = Tween<double>(begin: 0.0, end: 300).animate(controller!);
-    controller!.addListener(() {
+    /*controller!.addListener(() {
       setState(() {});
-    });
-    controller!.reverse();
+    });*/
+    controller!.reverse();*/
   }
 
   void _handleMenuButtonPressed() {
@@ -287,26 +309,37 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ],
         ),
       )),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        resizeToAvoidBottomInset: false,
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 40,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          _handleMenuButtonPressed();
-                          /*Navigator.push(
+      child: Stack(children: [
+        NotificationListener<ScrollNotification>(
+          //onNotification: _scrollListener,
+          child: NestedScrollView(
+            headerSliverBuilder: (context, value) {
+              return [
+                SliverAppBar(
+                  elevation: 4,
+                  pinned: true,
+                  stretch: true,
+                  backgroundColor: Colors.white,
+                  expandedHeight: getHeight(context) * 0.50,
+                  flexibleSpace: FlexibleSpaceBar(
+                    stretchModes: [StretchMode.zoomBackground],
+                    background: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 40,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      _handleMenuButtonPressed();
+                                      /*Navigator.push(
                             context,
                             PageTransition(
                                 duration: Duration(milliseconds: 200),
@@ -314,97 +347,141 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                 type: PageTransitionType.leftToRight,
                                 child: ProfilePage()),
                           );*/
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(80)),
-                          child: Padding(
-                              padding: const EdgeInsets.all(14.0),
-                              child: Icon(Iconsax.menu) //
-                              ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 15,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'DELIVER TO',
-                            style: TextStyle(
-                                letterSpacing: 1.2,
-                                fontFamily: 'SemiBold',
-                                color: color),
-                          ),
-                          SizedBox(
-                            height: 0,
-                          ),
-                          Text(
-                            'WIT Canteen',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontFamily: 'Medium',
-                                color: Colors.black.withOpacity(0.6)),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            PageTransition(
-                                duration: Duration(milliseconds: 200),
-                                curve: Curves.bounceInOut,
-                                type: PageTransitionType.rightToLeft,
-                                child: OrderView()),
-                          );
-                        },
-                        child: StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('Orders')
-                                .where('uid',
-                                    isEqualTo:
-                                        FirebaseAuth.instance.currentUser!.uid)
-                                .orderBy('time', descending: true)
-                                .where('status', isEqualTo: 'SUCCESS')
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData) return Container();
-                              if (snapshot.data!.docs.length >= 1) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(80)),
-                                  child: Padding(
-                                      padding: const EdgeInsets.all(14.0),
-                                      child: Badge(
-                                          elevation: 0,
-                                          badgeColor: color,
-                                          badgeContent: Text(
-                                            snapshot.data!.docs.length
-                                                .toString(),
-                                            style: TextStyle(
-                                                fontFamily: 'Medium',
-                                                color: Colors.white),
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(80)),
+                                      child: Padding(
+                                          padding: const EdgeInsets.all(14.0),
+                                          child: Icon(Iconsax.menu) //
                                           ),
-                                          child: Icon(Iconsax.reserve)) //
-                                      ),
-                                );
-                              } else {
-                                return Container();
-                              }
-                            }),
-                      ),
-                      SizedBox(
-                        width: 6,
-                      ),
-                      /*InkWell(
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 15,
+                                  ),
+                                  !open
+                                      ? Container(
+                                          decoration: BoxDecoration(
+                                              color:
+                                                  Colors.black.withOpacity(0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(40)),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 18.0, vertical: 12),
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.lock_outline_rounded,
+                                                  size: 14,
+                                                ),
+                                                SizedBox(
+                                                  width: 6,
+                                                ),
+                                                Text(
+                                                  'Canteen closed',
+                                                  style: TextStyle(
+                                                    fontFamily: 'SemiBold',
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      : Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'DELIVER TO',
+                                              style: TextStyle(
+                                                  letterSpacing: 1.2,
+                                                  fontFamily: 'SemiBold',
+                                                  color: color),
+                                            ),
+                                            SizedBox(
+                                              height: 0,
+                                            ),
+                                            Text(
+                                              'WIT Canteen',
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontFamily: 'Medium',
+                                                  color: Colors.black
+                                                      .withOpacity(0.6)),
+                                            )
+                                          ],
+                                        )
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        PageTransition(
+                                            duration:
+                                                Duration(milliseconds: 200),
+                                            curve: Curves.bounceInOut,
+                                            type:
+                                                PageTransitionType.rightToLeft,
+                                            child: OrderView()),
+                                      );
+                                    },
+                                    child: StreamBuilder<QuerySnapshot>(
+                                        stream: FirebaseFirestore.instance
+                                            .collection('Orders')
+                                            .where('uid',
+                                                isEqualTo: FirebaseAuth
+                                                    .instance.currentUser!.uid)
+                                            .orderBy('time', descending: true)
+                                            .where('status',
+                                                isEqualTo: 'SUCCESS')
+                                            .snapshots(),
+                                        builder: (context, snapshot) {
+                                          if (!snapshot.hasData)
+                                            return Container();
+                                          if (snapshot.data!.docs.length >= 1) {
+                                            return Container(
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          80)),
+                                              child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      14.0),
+                                                  child: Badge(
+                                                      elevation: 0,
+                                                      badgeColor: color,
+                                                      badgeContent: Text(
+                                                        snapshot
+                                                            .data!.docs.length
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                            fontFamily:
+                                                                'Medium',
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                      child: Icon(
+                                                          Iconsax.reserve)) //
+                                                  ),
+                                            );
+                                          } else {
+                                            return Container();
+                                          }
+                                        }),
+                                  ),
+                                  SizedBox(
+                                    width: 6,
+                                  ),
+                                  /*InkWell(
                         onTap: () {
                           Navigator.push(
                             context,
@@ -465,20 +542,20 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                               }
                             }),
                       ),*/
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 10),
-            Container(
-              height: 2,
-              width: getWidth(context),
-              color: Colors.black.withOpacity(0.05),
-            ),
-            SizedBox(height: 8),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Container(
+                          height: 2,
+                          width: getWidth(context),
+                          color: Colors.black.withOpacity(0.05),
+                        ),
+                        SizedBox(height: 8),
 
-            /*Stack(
+                        /*Stack(
               children: [
                 Container(
                   width: getWidth(context),
@@ -499,12 +576,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 ),
               ],
             ),*/
-            /*SizedBox(
+                        /*SizedBox(
               height: 20,
             ),*/
 
-            //Search box
-            /*Padding(
+                        //Search box
+                        /*Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: ConstrainedBox(
                 constraints:
@@ -545,281 +622,400 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             SizedBox(
               height: 30,
             ),*/
-            /*SizedBox(
+                        /*SizedBox(
               height: getHeight(context) * 0.03,
             ),*/
-            Expanded(
-              child: Column(
-                //mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                    child: Container(
-                      width: getWidth(context),
-                      // color: Colors.red,
-                      child: Text(
-                        "Offers",
-                        style: TextStyle(
-                          fontFamily: 'Bold',
-                          fontSize: 24,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                    child: StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('Offers')
-                          .snapshots(),
-                      builder: ((BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (!snapshot.hasData) return const SizedBox.shrink();
-                        return CarouselSlider(
-                          options: CarouselOptions(
-                            height: 120.0,
-                            viewportFraction: 1.0,
-                            initialPage: 0,
-                            enableInfiniteScroll: true,
-                            reverse: false,
-                            autoPlay: true,
-                            autoPlayInterval: Duration(seconds: 3),
-                            autoPlayAnimationDuration:
-                                Duration(milliseconds: 800),
-                            autoPlayCurve: Curves.fastOutSlowIn,
-                          ),
-                          items: snapshot.data!.docs.map((i) {
-                            Map<String, dynamic> map =
-                                i.data() as Map<String, dynamic>;
-                            return Builder(
-                              builder: (BuildContext context) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 0.0),
-                                  child: OfferItem(
-                                    img: map['image'],
-                                    condition: map['condition'],
-                                    percent: map['percent'],
-                                  ),
-                                );
-                              },
-                            );
-                          }).toList(),
-                        );
-                        /*return Container(
-                          height: 100,
-                          child: ListView.builder(
-                              primary: true,
-                              physics: BouncingScrollPhysics(),
-                              itemCount: snapshot.data!.docs.length,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (ctx, i) {
-                                Map<String, dynamic> map =
-                                    snapshot.data!.docs[i].data()
-                                        as Map<String, dynamic>;
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: OfferItem(
-                                    img: map['image'],
-                                    condition: map['condition'],
-                                    percent: map['percent'],
-                                  ),
-                                );
-                              }),
-                        );*/
-                      }),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                    child: Container(
-                      width: getWidth(context),
-                      // color: Colors.red,
-                      child: Text(
-                        "For You",
-                        style: TextStyle(
-                          fontFamily: 'Bold',
-                          fontSize: 24,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('Menu')
-                        .snapshots(),
-                    builder: ((BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (!snapshot.hasData) return const SizedBox.shrink();
-                      return Container(
-                        height: getHeight(context) * 0.2,
-                        child: ListView.builder(
-                            primary: true,
-                            physics: BouncingScrollPhysics(),
-                            itemCount: snapshot.data!.docs.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (ctx, i) {
-                              Map<String, dynamic> map = snapshot.data!.docs[i]
-                                  .data() as Map<String, dynamic>;
-                              return Padding(
-                                padding: EdgeInsets.only(
-                                    left: i == 0 ? 18.0 : 0, right: 12),
-                                child: MenuItemHorizontal(
-                                  img: map['image'],
-                                  price: map['price'].toString(),
-                                  product: map['product'],
-                                ),
-                              );
-                            }),
-                      );
-                    }),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                    child: Container(
-                      width: getWidth(context),
-                      // color: Colors.red,
-                      child: Text(
-                        "Menu",
-                        style: TextStyle(
-                          fontFamily: 'Bold',
-                          fontSize: 24,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Expanded(
-                      child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: MenuGrid(),
-                  )),
-                ],
-              ),
-            )
-          ],
-        ),
-        bottomNavigationBar: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('Carts')
-                .doc(FirebaseAuth.instance.currentUser!.uid)
-                .collection('Sum')
-                .snapshots(),
-            builder: (context, snapshot1) {
-              if (!snapshot1.hasData) return Container();
-              if (snapshot1.data!.docs[0]['sum'] > 0) {
-                return StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('Carts')
-                      .doc(FirebaseAuth.instance.currentUser!.uid)
-                      .collection('Items')
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    try {
-                      if (snapshot.hasError) return Container();
-                      if (!snapshot.hasData) return Container();
-                      if (snapshot.data!.docs.length != 0) {
-                        return Container(
-                          height: 80,
-                          width: getWidth(context),
-                          color: color,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 28.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        Expanded(
+                          child: SmartRefresher(
+                            enablePullDown: true,
+                            enablePullUp: true,
+                            header: ClassicHeader(),
+                            controller: refreshController,
+                            onRefresh: onRefresh,
+                            onLoading: onLoading,
+                            child: Column(
+                              //mainAxisSize: MainAxisSize.min,
                               children: [
-                                Row(
-                                  children: [
-                                    StreamBuilder<QuerySnapshot>(
-                                        stream: FirebaseFirestore.instance
-                                            .collection('Carts')
-                                            .doc(FirebaseAuth
-                                                .instance.currentUser!.uid)
-                                            .collection('Sum')
-                                            .snapshots(),
-                                        builder: (context, snapshot2) {
-                                          if (!snapshot2.hasData)
-                                            return Container();
-                                          return Text(
-                                            '₹ ${snapshot2.data!.docs[0]['sum'].toString()}',
-                                            style: TextStyle(
-                                                fontFamily: 'SemiBold',
-                                                color: Colors.white,
-                                                fontSize: 36),
-                                          );
-                                        }),
-                                    Text(
-                                      '    ${snapshot.data!.docs.length} items',
-                                      style: TextStyle(
-                                          fontFamily: 'SemiBold',
-                                          color: Colors.white.withOpacity(0.8),
-                                          fontSize: 20),
-                                    )
-                                  ],
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      PageTransition(
-                                          duration: Duration(milliseconds: 200),
-                                          curve: Curves.bounceInOut,
-                                          type: PageTransitionType.rightToLeft,
-                                          child: OrderPage()),
-                                    );
-                                  },
+                                /*Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 18.0),
                                   child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(60),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 24.0, vertical: 16),
-                                      child: Text(
-                                        'View Cart',
-                                        style: TextStyle(
-                                            fontFamily: 'SemiBold',
-                                            color: color,
-                                            fontSize: 16),
+                                    width: getWidth(context),
+                                    // color: Colors.red,
+                                    child: Text(
+                                      "Offers",
+                                      style: TextStyle(
+                                        fontFamily: 'Bold',
+                                        fontSize: 24,
                                       ),
                                     ),
                                   ),
-                                )
+                                ),*/
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                /*Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 18.0),
+                                  child: StreamBuilder<QuerySnapshot>(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('Offers')
+                                        .snapshots(),
+                                    builder: ((BuildContext context,
+                                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                                      if (!snapshot.hasData)
+                                        return const SizedBox.shrink();
+                                      return CarouselSlider(
+                                        options: CarouselOptions(
+                                          height: 120.0,
+                                          viewportFraction: 1.0,
+                                          initialPage: 0,
+                                          enableInfiniteScroll: true,
+                                          reverse: false,
+                                          autoPlay: true,
+                                          autoPlayInterval:
+                                              Duration(seconds: 3),
+                                          autoPlayAnimationDuration:
+                                              Duration(milliseconds: 800),
+                                          autoPlayCurve: Curves.fastOutSlowIn,
+                                        ),
+                                        items: snapshot.data!.docs.map((i) {
+                                          Map<String, dynamic> map =
+                                              i.data() as Map<String, dynamic>;
+                                          return Builder(
+                                            builder: (BuildContext context) {
+                                              return Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 0.0),
+                                                child: OfferItem(
+                                                  img: map['image'],
+                                                  condition: map['condition'],
+                                                  percent: map['percent'],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        }).toList(),
+                                      );
+                                      /*return Container(
+                            height: 100,
+                            child: ListView.builder(
+                                primary: true,
+                                physics: BouncingScrollPhysics(),
+                                itemCount: snapshot.data!.docs.length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (ctx, i) {
+                                  Map<String, dynamic> map =
+                                      snapshot.data!.docs[i].data()
+                                          as Map<String, dynamic>;
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: OfferItem(
+                                      img: map['image'],
+                                      condition: map['condition'],
+                                      percent: map['percent'],
+                                    ),
+                                  );
+                                }),
+                            );*/
+                                    }),
+                                  ),
+                                ),*/
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 18.0),
+                                  child: Container(
+                                    width: getWidth(context),
+                                    // color: Colors.red,
+                                    child: Text(
+                                      "For You",
+                                      style: TextStyle(
+                                        fontFamily: 'Bold',
+                                        fontSize: 24,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('Menu')
+                                      .snapshots(),
+                                  builder: ((BuildContext context,
+                                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                                    if (!snapshot.hasData)
+                                      return const SizedBox.shrink();
+                                    return Container(
+                                      height: getHeight(context) * 0.2,
+                                      child: ListView.builder(
+                                          primary: true,
+                                          physics: BouncingScrollPhysics(),
+                                          itemCount: snapshot.data!.docs.length,
+                                          scrollDirection: Axis.horizontal,
+                                          itemBuilder: (ctx, i) {
+                                            Map<String, dynamic> map =
+                                                snapshot.data!.docs[i].data()
+                                                    as Map<String, dynamic>;
+                                            return Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: i == 0 ? 18.0 : 0,
+                                                  right: 12),
+                                              child: MenuItemHorizontal(
+                                                img: map['image'],
+                                                price: map['price'].toString(),
+                                                product: map['product'],
+                                                id: snapshot.data!.docs[i].id,
+                                              ),
+                                            );
+                                          }),
+                                    );
+                                  }),
+                                ),
+
+                                /*Expanded(
+                                              child: Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                            child: MenuGrid(),
+                                          )),*/
                               ],
                             ),
                           ),
-                        );
-                      } else {
+                        )
+                      ],
+                    ),
+                  ),
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(40),
+                    child: Transform.translate(
+                        offset: Offset(0, 1),
+                        child: AnimatedBuilder(
+                          animation: _ColorAnimationController!,
+                          builder: (context, child) => Container(
+                            height: getHeight(context) * 0.12,
+                            color: _colorTween!.value,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 0.0, right: 0, top: 0),
+                              child: Container(
+                                color: Colors.white,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 18.0),
+                                      child: Container(
+                                        width: getWidth(context),
+                                        // color: Colors.red,
+                                        child: Text(
+                                          "Menu",
+                                          style: TextStyle(
+                                            fontFamily: 'Bold',
+                                            fontSize: 24,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 18.0),
+                                      child: Container(
+                                        alignment: Alignment.centerLeft,
+                                        height: 40,
+                                        color: Colors.white,
+                                        child: TabBar(
+                                            isScrollable: true,
+                                            controller: _tabController,
+                                            indicatorPadding:
+                                                EdgeInsets.symmetric(
+                                                    vertical: 2, horizontal: 2),
+                                            indicator: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                25.0,
+                                              ),
+                                              color:
+                                                  Colors.black.withOpacity(0.1),
+                                            ),
+                                            labelColor:
+                                                Colors.black.withOpacity(0.7),
+                                            labelPadding: EdgeInsets.only(
+                                                left: 20, right: 20),
+                                            unselectedLabelColor:
+                                                Colors.black.withOpacity(0.7),
+                                            labelStyle: TextStyle(
+                                                fontFamily: 'Bold',
+                                                fontSize: 16),
+                                            tabs: [
+                                              Tab(
+                                                text: 'Snacks',
+                                              ),
+                                              Tab(
+                                                text: 'Food',
+                                              ),
+                                              Tab(
+                                                text: 'Beverages',
+                                              ),
+                                            ]),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )),
+                  ),
+                )
+              ];
+            },
+            body: Container(
+              color: Colors.white,
+              child: TabBarView(controller: _tabController, children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                  child: MenuGrid(),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                  child: MenuGrid(),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                  child: MenuGrid(),
+                ),
+              ]),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('Carts')
+                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                  .collection('Sum')
+                  .snapshots(),
+              builder: (context, snapshot1) {
+                if (!snapshot1.hasData) return Container();
+                if (snapshot1.data!.docs[0]['sum'] > 0) {
+                  return StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('Carts')
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                        .collection('Items')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      try {
+                        if (snapshot.hasError) return Container();
+                        if (!snapshot.hasData) return Container();
+                        if (snapshot.data!.docs.length != 0) {
+                          return Container(
+                            height: 80,
+                            width: getWidth(context),
+                            color: color,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 28.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      StreamBuilder<QuerySnapshot>(
+                                          stream: FirebaseFirestore.instance
+                                              .collection('Carts')
+                                              .doc(FirebaseAuth
+                                                  .instance.currentUser!.uid)
+                                              .collection('Sum')
+                                              .snapshots(),
+                                          builder: (context, snapshot2) {
+                                            if (!snapshot2.hasData)
+                                              return Container();
+                                            return Text(
+                                              '₹ ${snapshot2.data!.docs[0]['sum'].toString()}',
+                                              style: TextStyle(
+                                                  fontFamily: 'SemiBold',
+                                                  color: Colors.white,
+                                                  fontSize: 36),
+                                            );
+                                          }),
+                                      Text(
+                                        '    ${snapshot.data!.docs.length} items',
+                                        style: TextStyle(
+                                            fontFamily: 'SemiBold',
+                                            color:
+                                                Colors.white.withOpacity(0.8),
+                                            fontSize: 20),
+                                      )
+                                    ],
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        PageTransition(
+                                            duration:
+                                                Duration(milliseconds: 200),
+                                            curve: Curves.bounceInOut,
+                                            type:
+                                                PageTransitionType.rightToLeft,
+                                            child: OrderPage()),
+                                      );
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(60),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 24.0, vertical: 16),
+                                        child: Text(
+                                          'View Cart',
+                                          style: TextStyle(
+                                              fontFamily: 'SemiBold',
+                                              color: color,
+                                              fontSize: 16),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Container();
+                        }
+                      } catch (e) {
+                        print('e--${e}');
                         return Container();
                       }
-                    } catch (e) {
-                      print('e--${e}');
-                      return Container();
-                    }
-                  },
-                );
-              } else {
-                return Container(
-                  height: 0,
-                );
-              }
-            }),
-      ),
+                    },
+                  );
+                } else {
+                  return Container(
+                    height: 0,
+                  );
+                }
+              }),
+        ),
+      ]),
     );
   }
 }

@@ -32,7 +32,7 @@ class _OrderViewState extends State<OrderView> {
                 fontSize: 28),
           ),
           //centerTitle: true,
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.black.withOpacity(0.02),
           shadowColor: Colors.transparent,
         ),
       ),

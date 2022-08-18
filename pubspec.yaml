@@ -43,7 +43,7 @@ dependencies:
   permission_handler: ^9.2.0
   file_picker: ^4.1.0
   iconsax: ^0.0.8
-  hotreloader: ^3.0.4
+  hotreloader: ^3.0.0
   cashfree_pg: 2.0.8+28
   badges: ^2.0.3
   url_launcher: ^6.1.2
@@ -52,6 +52,8 @@ dependencies:
   flutter_advanced_drawer: ^1.2.3+1
   figma_squircle: ^0.5.3
   carousel_slider: ^4.1.1
+  responsive_framework: ^0.1.8
+  pull_to_refresh: ^2.0.0
 
 
   # The following adds the Cupertino Icons font to your application.

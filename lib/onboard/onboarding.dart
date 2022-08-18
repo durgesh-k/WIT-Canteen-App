@@ -14,6 +14,7 @@ class _OnBoardingState extends State<OnBoarding> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: Column(
         children: [

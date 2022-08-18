@@ -20,21 +20,24 @@ class MenuGrid extends StatelessWidget {
       builder: ((BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) return const SizedBox.shrink();
         int count = snapshot.data!.docs.length;
-        return GridView.count(
-          //physics: NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: 9 / 11.6,
-          padding: EdgeInsets.all(5),
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          children: List.generate(count, (index) {
-            Map<String, dynamic> map =
-                snapshot.data!.docs[index].data() as Map<String, dynamic>;
-            return Menuitem(map['product'], map['price'].toString(),
-                map['image'], snapshot.data!.docs[index].id);
-          }),
+        return Container(
+          color: Colors.white,
+          child: GridView.count(
+            physics: NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 9 / 11.6,
+            padding: EdgeInsets.all(5),
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            children: List.generate(count, (index) {
+              Map<String, dynamic> map =
+                  snapshot.data!.docs[index].data() as Map<String, dynamic>;
+              return Menuitem(map['product'], map['price'].toString(),
+                  map['image'], snapshot.data!.docs[index].id);
+            }),
+          ),
         );
       }),
     );

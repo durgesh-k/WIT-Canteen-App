@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hotreloader/hotreloader.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 double getHeight(BuildContext context) {
   return MediaQuery.of(context).size.height;
@@ -7,6 +9,19 @@ double getHeight(BuildContext context) {
 
 double getWidth(BuildContext context) {
   return MediaQuery.of(context).size.width;
+}
+
+RefreshController refreshController = RefreshController(initialRefresh: false);
+HotReloader? reloader;
+
+void onRefresh() async {
+  //await HotReloader.create();
+  refreshController.refreshCompleted();
+}
+
+void onLoading() async {
+  await Future.delayed(Duration(milliseconds: 1000));
+  refreshController.loadComplete();
 }
 
 String? userType;
@@ -17,6 +32,8 @@ var color = Colors.orange.shade900;
 var color2 = Colors.black.withOpacity(0.05);
 bool googleloading = false;
 bool isVerified = false;
+
+bool open = true;
 
 String? getClassandId = '';
 String? initiatedOrder;
@@ -29,6 +46,7 @@ TextEditingController name = TextEditingController();
 TextEditingController email = TextEditingController();
 TextEditingController unique = TextEditingController();
 TextEditingController password = TextEditingController();
+TextEditingController number = TextEditingController();
 
 void showToast(String? str) {
   Fluttertoast.showToast(
