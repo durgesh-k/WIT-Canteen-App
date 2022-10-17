@@ -98,7 +98,8 @@ class _OrderItemState extends State<OrderItem> {
                                   .doc('0')
                                   .update({
                                 'sum': FieldValue.increment(
-                                    -int.parse(widget.price))
+                                    -int.parse(widget.price)),
+                                'quantity': FieldValue.increment(-1)
                               });
                             } catch (e) {}
 
@@ -117,9 +118,9 @@ class _OrderItemState extends State<OrderItem> {
                               //     .delete();
                               showToast('Removed ${widget.itemName} from cart');
                             }
-                            setState(() {
+                            /*setState(() {
                               //subtotal = subtotal - int.parse(widget.price);
-                            });
+                            });*/
                           },
                           onDoubleTap: () {},
                           child: Container(
@@ -159,7 +160,8 @@ class _OrderItemState extends State<OrderItem> {
                                 .doc('0')
                                 .update({
                               'sum':
-                                  FieldValue.increment(int.parse(widget.price))
+                                  FieldValue.increment(int.parse(widget.price)),
+                              'quantity': FieldValue.increment(1)
                             });
                             setState(() {
                               //subtotal = subtotal + int.parse(widget.price);

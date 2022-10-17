@@ -53,7 +53,7 @@ class _MenuitemState extends State<Menuitem> {
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                       child: Container(
-                        height: getHeight(context) * 0.08,
+                        height: getHeight(context) * 0.09,
                         width: getWidth(context),
                         color: Colors.white.withOpacity(0.1),
                         child: Padding(
@@ -61,6 +61,7 @@ class _MenuitemState extends State<Menuitem> {
                               horizontal: 18.0, vertical: 10),
                           child: Row(
                             //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
                                 width: getWidth(context) * 0.25,
@@ -154,7 +155,7 @@ _showModalBottomSheet(context, id, image, name, price) {
     builder: (context) {
       return StatefulBuilder(builder: ((context, setState) {
         return Container(
-            height: getHeight(context) * 0.2,
+            height: getHeight(context) * 0.22,
             width: double.infinity,
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(0)),
@@ -342,7 +343,8 @@ _showModalBottomSheet(context, id, image, name, price) {
                                 .doc('0')
                                 .update({
                               'sum': FieldValue.increment(
-                                  int.parse(price) * quantity)
+                                  int.parse(price) * quantity),
+                              'quantity': FieldValue.increment(quantity)
                             });
                           } catch (e) {
                             await FirebaseFirestore.instance
@@ -350,7 +352,10 @@ _showModalBottomSheet(context, id, image, name, price) {
                                 .doc(FirebaseAuth.instance.currentUser!.uid)
                                 .collection('Sum')
                                 .doc('0')
-                                .set({'sum': price * quantity});
+                                .set({
+                              'sum': price * quantity,
+                              'quantity': quantity
+                            });
                           }
 
                           Navigator.of(context).pop();

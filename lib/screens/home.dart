@@ -64,6 +64,20 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     controller!.reverse();*/
   }
 
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
+  HotReloader? reloader;
+
+  void onRefresh() async {
+    //await HotReloader.create();
+    refreshController.refreshCompleted();
+  }
+
+  void onLoading() async {
+    await Future.delayed(Duration(milliseconds: 1000));
+    refreshController.loadComplete();
+  }
+
   void _handleMenuButtonPressed() {
     _advancedDrawerController.showDrawer();
   }
@@ -323,470 +337,487 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                   expandedHeight: getHeight(context) * 0.50,
                   flexibleSpace: FlexibleSpaceBar(
                     stretchModes: [StretchMode.zoomBackground],
-                    background: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 40,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      _handleMenuButtonPressed();
-                                      /*Navigator.push(
-                            context,
-                            PageTransition(
-                                duration: Duration(milliseconds: 200),
-                                curve: Curves.bounceInOut,
-                                type: PageTransitionType.leftToRight,
-                                child: ProfilePage()),
-                          );*/
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(80)),
-                                      child: Padding(
-                                          padding: const EdgeInsets.all(14.0),
-                                          child: Icon(Iconsax.menu) //
-                                          ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  !open
-                                      ? Container(
-                                          decoration: BoxDecoration(
-                                              color:
-                                                  Colors.black.withOpacity(0.1),
-                                              borderRadius:
-                                                  BorderRadius.circular(40)),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 18.0, vertical: 12),
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.lock_outline_rounded,
-                                                  size: 14,
-                                                ),
-                                                SizedBox(
-                                                  width: 6,
-                                                ),
-                                                Text(
-                                                  'Canteen closed',
-                                                  style: TextStyle(
-                                                    fontFamily: 'SemiBold',
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        )
-                                      : Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'DELIVER TO',
-                                              style: TextStyle(
-                                                  letterSpacing: 1.2,
-                                                  fontFamily: 'SemiBold',
-                                                  color: color),
-                                            ),
-                                            SizedBox(
-                                              height: 0,
-                                            ),
-                                            Text(
-                                              'WIT Canteen',
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontFamily: 'Medium',
-                                                  color: Colors.black
-                                                      .withOpacity(0.6)),
-                                            )
-                                          ],
-                                        )
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        PageTransition(
-                                            duration:
-                                                Duration(milliseconds: 200),
-                                            curve: Curves.bounceInOut,
-                                            type:
-                                                PageTransitionType.rightToLeft,
-                                            child: OrderView()),
-                                      );
-                                    },
-                                    child: StreamBuilder<QuerySnapshot>(
-                                        stream: FirebaseFirestore.instance
-                                            .collection('Orders')
-                                            .where('uid',
-                                                isEqualTo: FirebaseAuth
-                                                    .instance.currentUser!.uid)
-                                            .orderBy('time', descending: true)
-                                            .where('status',
-                                                isEqualTo: 'SUCCESS')
-                                            .snapshots(),
-                                        builder: (context, snapshot) {
-                                          if (!snapshot.hasData)
-                                            return Container();
-                                          if (snapshot.data!.docs.length >= 1) {
-                                            return Container(
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          80)),
-                                              child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      14.0),
-                                                  child: Badge(
-                                                      elevation: 0,
-                                                      badgeColor: color,
-                                                      badgeContent: Text(
-                                                        snapshot
-                                                            .data!.docs.length
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                            fontFamily:
-                                                                'Medium',
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                      child: Icon(
-                                                          Iconsax.reserve)) //
-                                                  ),
-                                            );
-                                          } else {
-                                            return Container();
-                                          }
-                                        }),
-                                  ),
-                                  SizedBox(
-                                    width: 6,
-                                  ),
-                                  /*InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            PageTransition(
-                                duration: Duration(milliseconds: 200),
-                                curve: Curves.bounceInOut,
-                                type: PageTransitionType.rightToLeft,
-                                child: OrderPage()),
-                          );
-                        },
-                        child: StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('Carts')
-                                .doc(FirebaseAuth.instance.currentUser!.uid)
-                                .collection('Items')
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData) return Container();
-                              if (!snapshot.hasError) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(80)),
-                                  child: Padding(
-                                      padding: const EdgeInsets.all(14.0),
-                                      child: Badge(
-                                          elevation: 0,
-                                          badgeColor: color,
-                                          badgeContent: Text(
-                                            snapshot.data!.docs.length
-                                                .toString(),
-                                            style: TextStyle(
-                                                fontFamily: 'Medium',
-                                                color: Colors.white),
-                                          ),
-                                          child: Icon(Iconsax.shopping_cart)) //
-                                      ),
-                                );
-                              } else {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                      color: color2,
-                                      borderRadius: BorderRadius.circular(80)),
-                                  child: Padding(
-                                      padding: const EdgeInsets.all(14.0),
-                                      child: Badge(
-                                          elevation: 0,
-                                          badgeColor: color,
-                                          badgeContent: Text(
-                                            '0',
-                                            style: TextStyle(
-                                                fontFamily: 'Medium',
-                                                color: Colors.white),
-                                          ),
-                                          child: Icon(Iconsax.shopping_cart)) //
-                                      ),
-                                );
-                              }
-                            }),
-                      ),*/
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Container(
-                          height: 2,
-                          width: getWidth(context),
-                          color: Colors.black.withOpacity(0.05),
-                        ),
-                        SizedBox(height: 8),
-
-                        /*Stack(
-              children: [
-                Container(
-                  width: getWidth(context),
-                  // color: Colors.red,
-                  child: Text(
-                    "Welcome!",
-                    style: TextStyle(
-                      fontFamily: 'SemiBold',
-                      fontSize: 35,
-                    ),
-                  ),
-                ),
-                Container(
-                  height: notiHeight!.value,
-                  width: notiWidth!.value,
-                  decoration: BoxDecoration(
-                      color: color2, borderRadius: BorderRadius.circular(100)),
-                ),
-              ],
-            ),*/
-                        /*SizedBox(
-              height: 20,
-            ),*/
-
-                        //Search box
-                        /*Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: ConstrainedBox(
-                constraints:
-                    BoxConstraints.tightFor(width: getWidth(context)),
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: "What would you like to eat?",
-                    labelStyle: TextStyle(
-                        fontFamily: 'SemiBold',
-                        fontSize: 20,
-                        color: Colors.grey.withOpacity(0.5),
-                        fontWeight: FontWeight.w500),
-                    prefixIcon: Row(
-                      children: [
-                        Icon(Iconsax.search_normal),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          height: 20,
-                          width: 1,
-                          color: Colors.black.withOpacity(0.2),
-                        )
-                      ],
-                    ),
-                    prefixIconColor: Colors.black,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    fillColor: const Color.fromARGB(255, 224, 224, 224)
-                        .withOpacity(0.3),
-                    filled: false,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 30,
-            ),*/
-                        /*SizedBox(
-              height: getHeight(context) * 0.03,
-            ),*/
-                        Expanded(
-                          child: SmartRefresher(
-                            enablePullDown: true,
-                            enablePullUp: true,
-                            header: ClassicHeader(),
-                            controller: refreshController,
-                            onRefresh: onRefresh,
-                            onLoading: onLoading,
-                            child: Column(
-                              //mainAxisSize: MainAxisSize.min,
+                    background: SafeArea(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /*SizedBox(
+                            height: 40,
+                          ),*/
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 18.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                /*Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 18.0),
-                                  child: Container(
-                                    width: getWidth(context),
-                                    // color: Colors.red,
-                                    child: Text(
-                                      "Offers",
-                                      style: TextStyle(
-                                        fontFamily: 'Bold',
-                                        fontSize: 24,
-                                      ),
-                                    ),
-                                  ),
-                                ),*/
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                /*Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 18.0),
-                                  child: StreamBuilder<QuerySnapshot>(
-                                    stream: FirebaseFirestore.instance
-                                        .collection('Offers')
-                                        .snapshots(),
-                                    builder: ((BuildContext context,
-                                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                                      if (!snapshot.hasData)
-                                        return const SizedBox.shrink();
-                                      return CarouselSlider(
-                                        options: CarouselOptions(
-                                          height: 120.0,
-                                          viewportFraction: 1.0,
-                                          initialPage: 0,
-                                          enableInfiniteScroll: true,
-                                          reverse: false,
-                                          autoPlay: true,
-                                          autoPlayInterval:
-                                              Duration(seconds: 3),
-                                          autoPlayAnimationDuration:
-                                              Duration(milliseconds: 800),
-                                          autoPlayCurve: Curves.fastOutSlowIn,
-                                        ),
-                                        items: snapshot.data!.docs.map((i) {
-                                          Map<String, dynamic> map =
-                                              i.data() as Map<String, dynamic>;
-                                          return Builder(
-                                            builder: (BuildContext context) {
-                                              return Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 0.0),
-                                                child: OfferItem(
-                                                  img: map['image'],
-                                                  condition: map['condition'],
-                                                  percent: map['percent'],
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        }).toList(),
-                                      );
-                                      /*return Container(
-                            height: 100,
-                            child: ListView.builder(
-                                primary: true,
-                                physics: BouncingScrollPhysics(),
-                                itemCount: snapshot.data!.docs.length,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (ctx, i) {
-                                  Map<String, dynamic> map =
-                                      snapshot.data!.docs[i].data()
-                                          as Map<String, dynamic>;
-                                  return Padding(
-                                    padding: const EdgeInsets.only(right: 8.0),
-                                    child: OfferItem(
-                                      img: map['image'],
-                                      condition: map['condition'],
-                                      percent: map['percent'],
-                                    ),
-                                  );
-                                }),
+                                Row(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        _handleMenuButtonPressed();
+                                        /*Navigator.push(
+                              context,
+                              PageTransition(
+                                  duration: Duration(milliseconds: 200),
+                                  curve: Curves.bounceInOut,
+                                  type: PageTransitionType.leftToRight,
+                                  child: ProfilePage()),
                             );*/
-                                    }),
-                                  ),
-                                ),*/
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 18.0),
-                                  child: Container(
-                                    width: getWidth(context),
-                                    // color: Colors.red,
-                                    child: Text(
-                                      "For You",
-                                      style: TextStyle(
-                                        fontFamily: 'Bold',
-                                        fontSize: 24,
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(80)),
+                                        child: Padding(
+                                            padding: const EdgeInsets.all(14.0),
+                                            child: Icon(Iconsax.menu) //
+                                            ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                StreamBuilder<QuerySnapshot>(
-                                  stream: FirebaseFirestore.instance
-                                      .collection('Menu')
-                                      .snapshots(),
-                                  builder: ((BuildContext context,
-                                      AsyncSnapshot<QuerySnapshot> snapshot) {
-                                    if (!snapshot.hasData)
-                                      return const SizedBox.shrink();
-                                    return Container(
-                                      height: getHeight(context) * 0.2,
-                                      child: ListView.builder(
-                                          primary: true,
-                                          physics: BouncingScrollPhysics(),
-                                          itemCount: snapshot.data!.docs.length,
-                                          scrollDirection: Axis.horizontal,
-                                          itemBuilder: (ctx, i) {
-                                            Map<String, dynamic> map =
-                                                snapshot.data!.docs[i].data()
-                                                    as Map<String, dynamic>;
-                                            return Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: i == 0 ? 18.0 : 0,
-                                                  right: 12),
-                                              child: MenuItemHorizontal(
-                                                img: map['image'],
-                                                price: map['price'].toString(),
-                                                product: map['product'],
-                                                id: snapshot.data!.docs[i].id,
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    !open
+                                        ? Container(
+                                            decoration: BoxDecoration(
+                                                color: Colors.black
+                                                    .withOpacity(0.1),
+                                                borderRadius:
+                                                    BorderRadius.circular(40)),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 18.0,
+                                                      vertical: 12),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.lock_outline_rounded,
+                                                    size: 14,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 6,
+                                                  ),
+                                                  Text(
+                                                    'Canteen closed',
+                                                    style: TextStyle(
+                                                      fontFamily: 'SemiBold',
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            );
-                                          }),
-                                    );
-                                  }),
+                                            ),
+                                          )
+                                        : Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'DELIVER TO',
+                                                style: TextStyle(
+                                                    letterSpacing: 1.2,
+                                                    fontFamily: 'SemiBold',
+                                                    color: color),
+                                              ),
+                                              SizedBox(
+                                                height: 0,
+                                              ),
+                                              Text(
+                                                'WIT Canteen',
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontFamily: 'Medium',
+                                                    color: Colors.black
+                                                        .withOpacity(0.6)),
+                                              )
+                                            ],
+                                          )
+                                  ],
                                 ),
-
-                                /*Expanded(
-                                              child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                                            child: MenuGrid(),
-                                          )),*/
+                                Row(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                              duration:
+                                                  Duration(milliseconds: 200),
+                                              curve: Curves.bounceInOut,
+                                              type: PageTransitionType
+                                                  .rightToLeft,
+                                              child: OrderView()),
+                                        );
+                                      },
+                                      child: StreamBuilder<QuerySnapshot>(
+                                          stream: FirebaseFirestore.instance
+                                              .collection('Orders')
+                                              .where('uid',
+                                                  isEqualTo: FirebaseAuth
+                                                      .instance
+                                                      .currentUser!
+                                                      .uid)
+                                              .orderBy('time', descending: true)
+                                              .where('status',
+                                                  isEqualTo: 'SUCCESS')
+                                              .snapshots(),
+                                          builder: (context, snapshot) {
+                                            if (!snapshot.hasData)
+                                              return Container();
+                                            if (snapshot.data!.docs.length >=
+                                                1) {
+                                              return Container(
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            80)),
+                                                child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            14.0),
+                                                    child: Badge(
+                                                        elevation: 0,
+                                                        badgeColor: color,
+                                                        badgeContent: Text(
+                                                          snapshot
+                                                              .data!.docs.length
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                              fontFamily:
+                                                                  'Medium',
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                        child: Icon(
+                                                            Iconsax.reserve)) //
+                                                    ),
+                                              );
+                                            } else {
+                                              return Container();
+                                            }
+                                          }),
+                                    ),
+                                    SizedBox(
+                                      width: 6,
+                                    ),
+                                    /*InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                  duration: Duration(milliseconds: 200),
+                                  curve: Curves.bounceInOut,
+                                  type: PageTransitionType.rightToLeft,
+                                  child: OrderPage()),
+                            );
+                          },
+                          child: StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('Carts')
+                                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                                  .collection('Items')
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) return Container();
+                                if (!snapshot.hasError) {
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(80)),
+                                    child: Padding(
+                                        padding: const EdgeInsets.all(14.0),
+                                        child: Badge(
+                                            elevation: 0,
+                                            badgeColor: color,
+                                            badgeContent: Text(
+                                              snapshot.data!.docs.length
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  fontFamily: 'Medium',
+                                                  color: Colors.white),
+                                            ),
+                                            child: Icon(Iconsax.shopping_cart)) //
+                                        ),
+                                  );
+                                } else {
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                        color: color2,
+                                        borderRadius: BorderRadius.circular(80)),
+                                    child: Padding(
+                                        padding: const EdgeInsets.all(14.0),
+                                        child: Badge(
+                                            elevation: 0,
+                                            badgeColor: color,
+                                            badgeContent: Text(
+                                              '0',
+                                              style: TextStyle(
+                                                  fontFamily: 'Medium',
+                                                  color: Colors.white),
+                                            ),
+                                            child: Icon(Iconsax.shopping_cart)) //
+                                        ),
+                                  );
+                                }
+                              }),
+                        ),*/
+                                  ],
+                                ),
                               ],
                             ),
                           ),
-                        )
-                      ],
+                          SizedBox(height: 10),
+                          Container(
+                            height: 2,
+                            width: getWidth(context),
+                            color: Colors.black.withOpacity(0.05),
+                          ),
+                          SizedBox(height: 8),
+
+                          /*Stack(
+                                  children: [
+                                    Container(
+                                      width: getWidth(context),
+                                      // color: Colors.red,
+                                      child: Text(
+                      "Welcome!",
+                      style: TextStyle(
+                        fontFamily: 'SemiBold',
+                        fontSize: 35,
+                      ),
+                                      ),
+                                    ),
+                                    Container(
+                                      height: notiHeight!.value,
+                                      width: notiWidth!.value,
+                                      decoration: BoxDecoration(
+                        color: color2, borderRadius: BorderRadius.circular(100)),
+                                    ),
+                                  ],
+                                ),*/
+                          /*SizedBox(
+                                  height: 20,
+                                ),*/
+
+                          //Search box
+                          /*Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: ConstrainedBox(
+                                    constraints:
+                      BoxConstraints.tightFor(width: getWidth(context)),
+                                    child: TextField(
+                                      decoration: InputDecoration(
+                      labelText: "What would you like to eat?",
+                      labelStyle: TextStyle(
+                          fontFamily: 'SemiBold',
+                          fontSize: 20,
+                          color: Colors.grey.withOpacity(0.5),
+                          fontWeight: FontWeight.w500),
+                      prefixIcon: Row(
+                        children: [
+                          Icon(Iconsax.search_normal),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            height: 20,
+                            width: 1,
+                            color: Colors.black.withOpacity(0.2),
+                          )
+                        ],
+                      ),
+                      prefixIconColor: Colors.black,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      fillColor: const Color.fromARGB(255, 224, 224, 224)
+                          .withOpacity(0.3),
+                      filled: false,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 30,
+                                ),*/
+                          /*SizedBox(
+                                  height: getHeight(context) * 0.03,
+                                ),*/
+                          Expanded(
+                            child: SmartRefresher(
+                              enablePullDown: true,
+                              enablePullUp: true,
+                              header: ClassicHeader(),
+                              controller: refreshController,
+                              onRefresh: onRefresh,
+                              onLoading: onLoading,
+                              child: Container(
+                                height: getHeight(context) * 0.3,
+                                child: Column(
+                                  //mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    /*Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 18.0),
+                                      child: Container(
+                                        width: getWidth(context),
+                                        // color: Colors.red,
+                                        child: Text(
+                                          "Offers",
+                                          style: TextStyle(
+                                            fontFamily: 'Bold',
+                                            fontSize: 24,
+                                          ),
+                                        ),
+                                      ),
+                                    ),*/
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    /*Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 18.0),
+                                      child: StreamBuilder<QuerySnapshot>(
+                                        stream: FirebaseFirestore.instance
+                                            .collection('Offers')
+                                            .snapshots(),
+                                        builder: ((BuildContext context,
+                                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                                          if (!snapshot.hasData)
+                                            return const SizedBox.shrink();
+                                          return CarouselSlider(
+                                            options: CarouselOptions(
+                                              height: 120.0,
+                                              viewportFraction: 1.0,
+                                              initialPage: 0,
+                                              enableInfiniteScroll: true,
+                                              reverse: false,
+                                              autoPlay: true,
+                                              autoPlayInterval:
+                                                  Duration(seconds: 3),
+                                              autoPlayAnimationDuration:
+                                                  Duration(milliseconds: 800),
+                                              autoPlayCurve: Curves.fastOutSlowIn,
+                                            ),
+                                            items: snapshot.data!.docs.map((i) {
+                                              Map<String, dynamic> map =
+                                                  i.data() as Map<String, dynamic>;
+                                              return Builder(
+                                                builder: (BuildContext context) {
+                                                  return Padding(
+                                                    padding: const EdgeInsets.only(
+                                                        right: 0.0),
+                                                    child: OfferItem(
+                                                      img: map['image'],
+                                                      condition: map['condition'],
+                                                      percent: map['percent'],
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            }).toList(),
+                                          );
+                                          /*return Container(
+                                height: 100,
+                                child: ListView.builder(
+                                    primary: true,
+                                    physics: BouncingScrollPhysics(),
+                                    itemCount: snapshot.data!.docs.length,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: (ctx, i) {
+                                      Map<String, dynamic> map =
+                                          snapshot.data!.docs[i].data()
+                                              as Map<String, dynamic>;
+                                      return Padding(
+                                        padding: const EdgeInsets.only(right: 8.0),
+                                        child: OfferItem(
+                                          img: map['image'],
+                                          condition: map['condition'],
+                                          percent: map['percent'],
+                                        ),
+                                      );
+                                    }),
+                                );*/
+                                        }),
+                                      ),
+                                    ),*/
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 18.0),
+                                      child: Container(
+                                        width: getWidth(context),
+                                        // color: Colors.red,
+                                        child: Text(
+                                          "For You",
+                                          style: TextStyle(
+                                            fontFamily: 'Bold',
+                                            fontSize: 24,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    StreamBuilder<QuerySnapshot>(
+                                      stream: FirebaseFirestore.instance
+                                          .collection('Menu')
+                                          .snapshots(),
+                                      builder: ((BuildContext context,
+                                          AsyncSnapshot<QuerySnapshot>
+                                              snapshot) {
+                                        if (!snapshot.hasData)
+                                          return const SizedBox.shrink();
+                                        return Container(
+                                          height: getHeight(context) * 0.2,
+                                          child: ListView.builder(
+                                              primary: true,
+                                              physics: BouncingScrollPhysics(),
+                                              itemCount:
+                                                  snapshot.data!.docs.length,
+                                              scrollDirection: Axis.horizontal,
+                                              itemBuilder: (ctx, i) {
+                                                Map<String, dynamic> map =
+                                                    snapshot.data!.docs[i]
+                                                            .data()
+                                                        as Map<String, dynamic>;
+                                                return Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: i == 0 ? 18.0 : 0,
+                                                      right: 12),
+                                                  child: MenuItemHorizontal(
+                                                    img: map['image'],
+                                                    price:
+                                                        map['price'].toString(),
+                                                    product: map['product'],
+                                                    id: snapshot
+                                                        .data!.docs[i].id,
+                                                  ),
+                                                );
+                                              }),
+                                        );
+                                      }),
+                                    ),
+
+                                    /*Expanded(
+                                                  child: Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                                child: MenuGrid(),
+                                              )),*/
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   bottom: PreferredSize(
@@ -934,36 +965,36 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Row(
-                                    children: [
-                                      StreamBuilder<QuerySnapshot>(
-                                          stream: FirebaseFirestore.instance
-                                              .collection('Carts')
-                                              .doc(FirebaseAuth
-                                                  .instance.currentUser!.uid)
-                                              .collection('Sum')
-                                              .snapshots(),
-                                          builder: (context, snapshot2) {
-                                            if (!snapshot2.hasData)
-                                              return Container();
-                                            return Text(
+                                  StreamBuilder<QuerySnapshot>(
+                                      stream: FirebaseFirestore.instance
+                                          .collection('Carts')
+                                          .doc(FirebaseAuth
+                                              .instance.currentUser!.uid)
+                                          .collection('Sum')
+                                          .snapshots(),
+                                      builder: (context, snapshot2) {
+                                        if (!snapshot2.hasData)
+                                          return Container();
+                                        return Row(
+                                          children: [
+                                            Text(
                                               '₹ ${snapshot2.data!.docs[0]['sum'].toString()}',
                                               style: TextStyle(
                                                   fontFamily: 'SemiBold',
                                                   color: Colors.white,
                                                   fontSize: 36),
-                                            );
-                                          }),
-                                      Text(
-                                        '    ${snapshot.data!.docs.length} items',
-                                        style: TextStyle(
-                                            fontFamily: 'SemiBold',
-                                            color:
-                                                Colors.white.withOpacity(0.8),
-                                            fontSize: 20),
-                                      )
-                                    ],
-                                  ),
+                                            ),
+                                            Text(
+                                              '    ${snapshot2.data!.docs[0]['quantity'].toString()} items',
+                                              style: TextStyle(
+                                                  fontFamily: 'SemiBold',
+                                                  color: Colors.white
+                                                      .withOpacity(0.8),
+                                                  fontSize: 20),
+                                            )
+                                          ],
+                                        );
+                                      }),
                                   InkWell(
                                     onTap: () {
                                       Navigator.push(

@@ -11,19 +11,6 @@ double getWidth(BuildContext context) {
   return MediaQuery.of(context).size.width;
 }
 
-RefreshController refreshController = RefreshController(initialRefresh: false);
-HotReloader? reloader;
-
-void onRefresh() async {
-  //await HotReloader.create();
-  refreshController.refreshCompleted();
-}
-
-void onLoading() async {
-  await Future.delayed(Duration(milliseconds: 1000));
-  refreshController.loadComplete();
-}
-
 String? userType;
 String? processType;
 

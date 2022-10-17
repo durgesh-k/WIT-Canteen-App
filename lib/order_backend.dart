@@ -73,6 +73,31 @@ Future<void> pay(BuildContext context, String amount, String cartId) async {
                   .collection('Items')
                   .add(doc.data());
             });
+            Navigator.push(
+                context,
+                PageTransition(
+                    duration: Duration(milliseconds: 200),
+                    curve: Curves.bounceInOut,
+                    type: PageTransitionType.rightToLeft,
+                    child: OrderSuccess()));
+          });
+
+          await FirebaseFirestore.instance
+              .collection("Carts")
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .collection('Items')
+              .get()
+              .then((query) {
+            query.docs.forEach((doc) {
+              FirebaseFirestore.instance
+                  .collection("Recommendations")
+                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                  .collection('Items')
+                  .doc(doc.data()['product'])
+                  .update({
+                'index': FieldValue.increment(1),
+              });
+            });
 
             Navigator.push(
                 context,
@@ -82,6 +107,7 @@ Future<void> pay(BuildContext context, String amount, String cartId) async {
                     type: PageTransitionType.rightToLeft,
                     child: OrderSuccess()));
           });
+
           await FirebaseFirestore.instance
               .collection('Carts')
               .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -97,7 +123,7 @@ Future<void> pay(BuildContext context, String amount, String cartId) async {
               .doc(FirebaseAuth.instance.currentUser!.uid)
               .collection('Sum')
               .doc('0')
-              .update({'sum': 0});
+              .set({'sum': 0, 'quantity': 0});
 
           /*await FirebaseFirestore.instance
               .collection("Carts")

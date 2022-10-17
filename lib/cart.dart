@@ -98,6 +98,7 @@ class _OrderPageState extends State<OrderPage> {
           padding: const EdgeInsets.symmetric(horizontal: 18.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -115,8 +116,8 @@ class _OrderPageState extends State<OrderPage> {
                             fontSize: 18,
                           ),
                         ),
-                        const SizedBox(
-                          height: 6,
+                        SizedBox(
+                          height: getHeight(context) * 0.005,
                         ),
                         Text(
                           FirebaseAuth.instance.currentUser!.phoneNumber!,
@@ -162,16 +163,16 @@ class _OrderPageState extends State<OrderPage> {
                   )
                 ],
               ),
-              const SizedBox(
-                height: 20,
+              SizedBox(
+                height: getHeight(context) * 0.02,
               ),
               Container(
                 height: 1,
                 width: getWidth(context),
                 color: Colors.grey.shade200,
               ),
-              const SizedBox(
-                height: 20,
+              SizedBox(
+                height: getHeight(context) * 0.018,
               ),
               StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
@@ -194,24 +195,30 @@ class _OrderPageState extends State<OrderPage> {
                               color: Colors.grey.shade200),
                         )));
                   return Container(
-                    height: getHeight(context) * 0.45,
+                    height: getHeight(context) * 0.4,
                     width: getWidth(context),
-                    child: SingleChildScrollView(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: snapshot.data!.docs.length,
-                        physics: BouncingScrollPhysics(),
-                        itemBuilder: (ctx, i) {
-                          Map<String, dynamic> map = snapshot.data!.docs[i]
-                              .data() as Map<String, dynamic>;
+                    child: Scrollbar(
+                      isAlwaysShown: true,
+                      thickness: 10,
+                      radius: Radius.circular(20),
+                      interactive: true,
+                      child: SingleChildScrollView(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: snapshot.data!.docs.length,
+                          physics: BouncingScrollPhysics(),
+                          itemBuilder: (ctx, i) {
+                            Map<String, dynamic> map = snapshot.data!.docs[i]
+                                .data() as Map<String, dynamic>;
 
-                          return OrderItem(
-                              map['product'],
-                              map['price'].toString(),
-                              map['image'],
-                              snapshot.data!.docs[i].id,
-                              map['quantity']);
-                        },
+                            return OrderItem(
+                                map['product'],
+                                map['price'].toString(),
+                                map['image'],
+                                snapshot.data!.docs[i].id,
+                                map['quantity']);
+                          },
+                        ),
                       ),
                     ),
                   );

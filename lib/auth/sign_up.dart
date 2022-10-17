@@ -530,6 +530,31 @@ class _SignUpState extends State<SignUp> {
                                   'class': _class,
                                   'userType': userType
                                 });
+                                await FirebaseFirestore.instance
+              .collection('Carts')
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .collection('Sum')
+              .doc('0')
+              .set({'sum': 0, 'quantity': 0});
+                                await FirebaseFirestore.instance
+                                    .collection("Menu")
+                                    .get()
+                                    .then((query) {
+                                  query.docs.forEach((doc) {
+                                    FirebaseFirestore.instance
+                                        .collection("Recommendations")
+                                        .doc(FirebaseAuth
+                                            .instance.currentUser!.uid)
+                                        .collection('Items')
+                                        .doc(doc.data()['product'])
+                                        .set({
+                                      'product': doc.data()['product'],
+                                      'image': doc.data()['image'],
+                                      'price': doc.data()['price'],
+                                      'index': 0,
+                                    });
+                                  });
+                                });
                                 print(FirebaseAuth
                                     .instance.currentUser!.displayName);
                                 await FirebaseAuth.instance.currentUser!

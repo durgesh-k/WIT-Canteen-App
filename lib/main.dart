@@ -19,9 +19,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   //reloader = await HotReloader.create();
-  var isOpen =
-      await FirebaseFirestore.instance.collection('Canteen').doc('0').get();
-  open = isOpen['open'];
   //print('cndn--${open['open']}');
   runApp(MyApp());
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
