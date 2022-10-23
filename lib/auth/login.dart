@@ -38,10 +38,11 @@ class _LoginState extends State<Login> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
-      body: Column(
+      body: Stack(
+        alignment: Alignment.bottomCenter,
         children: [
           Container(
-            height: getHeight(context) * 0.58,
+            height: getHeight(context),
             width: getWidth(context),
             decoration: BoxDecoration(
                 color: Colors.grey.shade200,
@@ -52,7 +53,21 @@ class _LoginState extends State<Login> {
                     image: AssetImage('assets/images/chai2.jpg'))),
           ),
           Container(
-            height: getHeight(context) * 0.42,
+            height: getHeight(context),
+            width: getWidth(context),
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                  Colors.black.withOpacity(0),
+                  Colors.black.withOpacity(0.3),
+                  Colors.black.withOpacity(0.4),
+                  Colors.black.withOpacity(0.6),
+                ])),
+          ),
+          Container(
+            height: getHeight(context) * 0.46,
             width: getWidth(context),
             child: Padding(
               padding: const EdgeInsets.all(36.0),
@@ -66,7 +81,7 @@ class _LoginState extends State<Login> {
                       'Login',
                       style: TextStyle(
                           fontFamily: 'Bold',
-                          color: Colors.black.withOpacity(0.8),
+                          color: Colors.white,
                           fontSize: 30),
                     ),
                   ),
@@ -76,7 +91,7 @@ class _LoginState extends State<Login> {
                       'Login to quickly place orders',
                       style: TextStyle(
                           fontFamily: 'Regular',
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.white.withOpacity(0.5),
                           fontSize: 16),
                     ),
                   ),
@@ -166,7 +181,7 @@ class _LoginState extends State<Login> {
                         "Don't have an account?",
                         style: TextStyle(
                             fontFamily: 'Medium',
-                            color: Colors.black.withOpacity(0.5)),
+                            color: Colors.white.withOpacity(0.5)),
                       ),
                       SizedBox(
                         width: 4,
@@ -284,7 +299,7 @@ class _LoginState extends State<Login> {
                         style: TextStyle(
                             fontFamily: 'SemiBold',
                             fontSize: 12,
-                            color: Colors.black.withOpacity(0.2)),
+                            color: Colors.white.withOpacity(0.5)),
                       ),
                       SizedBox(width: 30),
                       /*Container(
@@ -303,7 +318,7 @@ class _LoginState extends State<Login> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.white.withOpacity(0.5),
                         borderRadius: BorderRadius.circular(40),
                         /*border: Border.all(
                               color: Colors.black.withOpacity(0.4), width: 2)*/
@@ -316,7 +331,7 @@ class _LoginState extends State<Login> {
                           style: TextStyle(
                               fontFamily: 'SemiBold',
                               fontSize: 12,
-                              color: Colors.black.withOpacity(0.4)),
+                              color: Colors.black.withOpacity(0.6)),
                         ),
                       ),
                     ),
@@ -333,7 +348,7 @@ class _LoginState extends State<Login> {
 
 _showModalBottomSheetforNumber(context) {
   showModalBottomSheet(
-      isScrollControlled: false,
+      isScrollControlled: true,
       context: context,
       builder: (context) {
         return StatefulBuilder(builder: (context, setState) {
@@ -341,11 +356,12 @@ _showModalBottomSheetforNumber(context) {
           double numberOpacity = 0.0;
           String msg = '';
           bool? loading = false;
-          final numberkey = GlobalKey<FormState>();
+
           return Padding(
-            padding: MediaQuery.of(context).viewInsets,
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
             child: Container(
-              height: getHeight(context) * 0.8,
+              //height: getHeight(context) * 0.8,
               width: getWidth(context),
               child: Padding(
                 padding: const EdgeInsets.all(18.0),
@@ -382,7 +398,7 @@ _showModalBottomSheetforNumber(context) {
                             fontSize: 20),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 30),
                     Form(
                       key: numberkey,
                       child: TextFormField(
@@ -547,6 +563,7 @@ _showModalBottomSheetforNumber(context) {
                                       ),
                                     )),
                         )),
+                    SizedBox(height: 30),
                   ],
                 ),
               ),

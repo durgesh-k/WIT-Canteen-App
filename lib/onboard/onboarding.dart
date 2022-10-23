@@ -16,10 +16,11 @@ class _OnBoardingState extends State<OnBoarding> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
-      body: Column(
+      body: Stack(
+        alignment: Alignment.bottomCenter,
         children: [
           Container(
-            height: getHeight(context) * 0.6,
+            height: getHeight(context),
             width: getWidth(context),
             decoration: BoxDecoration(
                 color: Colors.grey.shade200,
@@ -27,7 +28,21 @@ class _OnBoardingState extends State<OnBoarding> {
                     colorFilter: ColorFilter.mode(
                         Colors.black.withOpacity(0.2), BlendMode.srcOver),
                     fit: BoxFit.cover,
-                    image: AssetImage('assets/images/samosa.jpg'))),
+                    image: AssetImage('assets/images/idli.jpg'))),
+          ),
+          Container(
+            height: getHeight(context),
+            width: getWidth(context),
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                  Colors.black.withOpacity(0),
+                  Colors.black.withOpacity(0.3),
+                  Colors.black.withOpacity(0.4),
+                  Colors.black.withOpacity(0.6),
+                ])),
           ),
           Container(
             height: getHeight(context) * 0.4,
@@ -35,16 +50,17 @@ class _OnBoardingState extends State<OnBoarding> {
             child: Padding(
               padding: const EdgeInsets.all(36.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width: getWidth(context) * 0.76,
+                    width: getWidth(context) * 0.66,
                     child: Text(
-                      'Get your canteen orders on time',
+                      'Now get your canteen orders on time',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                           fontFamily: 'Bold',
-                          color: Colors.black.withOpacity(0.8),
+                          color: Colors.white.withOpacity(1),
                           fontSize: 30),
                     ),
                   ),
@@ -52,11 +68,15 @@ class _OnBoardingState extends State<OnBoarding> {
                     width: getWidth(context) * 0.7,
                     child: Text(
                       'Follow next steps to Login/Create Account to quickly manage orders',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                          fontFamily: 'Regular',
-                          color: Colors.black.withOpacity(0.2),
+                          fontFamily: 'SemiBold',
+                          color: Colors.white.withOpacity(0.5),
                           fontSize: 16),
                     ),
+                  ),
+                  SizedBox(
+                    height: 30,
                   ),
                   MaterialButton(
                       elevation: 0,
@@ -75,17 +95,20 @@ class _OnBoardingState extends State<OnBoarding> {
                       color: color,
                       padding: EdgeInsets.symmetric(horizontal: 0.0),
                       child: Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            color: Colors.transparent),
-                        child: Center(
-                            child: Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          color: Colors.white,
-                        )),
-                      )),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              color: Colors.transparent),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 28.0, vertical: 18),
+                            child: Text(
+                              'Get Started',
+                              style: TextStyle(
+                                  fontFamily: 'SemiBold',
+                                  color: Colors.white,
+                                  fontSize: 16),
+                            ),
+                          ))),
                 ],
               ),
             ),

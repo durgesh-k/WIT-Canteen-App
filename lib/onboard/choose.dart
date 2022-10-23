@@ -25,9 +25,9 @@ class _ChooseState extends State<Choose> {
                 color: Colors.grey.shade200,
                 image: DecorationImage(
                     colorFilter: ColorFilter.mode(
-                        Colors.black.withOpacity(0.2), BlendMode.srcOver),
+                        Colors.black.withOpacity(0.3), BlendMode.srcOver),
                     fit: BoxFit.cover,
-                    image: AssetImage('assets/images/idli.jpg'))),
+                    image: AssetImage('assets/images/samosa.jpg'))),
           ),
           Container(
             height: getHeight(context) * 0.4,

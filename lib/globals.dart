@@ -35,6 +35,8 @@ TextEditingController unique = TextEditingController();
 TextEditingController password = TextEditingController();
 TextEditingController number = TextEditingController();
 
+final numberkey = GlobalKey<FormState>();
+
 void showToast(String? str) {
   Fluttertoast.showToast(
       msg: str!,

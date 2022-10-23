@@ -14,6 +14,9 @@ import 'package:wit_canteen_app/globals.dart';
 import 'package:wit_canteen_app/menuGrid.dart';
 import 'package:wit_canteen_app/menuitem.dart';
 import 'package:wit_canteen_app/cart.dart';
+import 'package:wit_canteen_app/otherScreens/about.dart';
+import 'package:wit_canteen_app/otherScreens/edit_profile.dart';
+import 'package:wit_canteen_app/otherScreens/order_history.dart';
 import 'package:wit_canteen_app/profile.dart';
 import 'package:wit_canteen_app/screens/my_orders.dart';
 
@@ -184,99 +187,132 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                     SizedBox(
                       height: getHeight(context) * 0.06,
                     ),
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Row(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: color2.withOpacity(0.04),
-                                  borderRadius: BorderRadius.circular(40)),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SvgPicture.asset(
-                                    'assets/icons/history.svg'),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                                duration: Duration(milliseconds: 200),
+                                curve: Curves.bounceInOut,
+                                type: PageTransitionType.rightToLeft,
+                                child: EditProfile()));
+                      },
+                      child: Container(
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Row(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: color2.withOpacity(0.04),
+                                    borderRadius: BorderRadius.circular(40)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child:
+                                      SvgPicture.asset('assets/icons/edit.svg'),
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              'Order History',
-                              style: TextStyle(
-                                fontFamily: "SemiBold",
-                                fontSize: 18,
-                                color: Colors.black,
+                              SizedBox(
+                                width: 10,
                               ),
-                            ),
-                          ],
+                              Text(
+                                'Edit Profile',
+                                style: TextStyle(
+                                  fontFamily: "SemiBold",
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                     SizedBox(
                       height: getHeight(context) * 0.01,
                     ),
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Row(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: color2.withOpacity(0.04),
-                                  borderRadius: BorderRadius.circular(40)),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child:
-                                    SvgPicture.asset('assets/icons/about.svg'),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                                duration: Duration(milliseconds: 200),
+                                curve: Curves.bounceInOut,
+                                type: PageTransitionType.rightToLeft,
+                                child: OrderHistory()));
+                      },
+                      child: Container(
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Row(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: color2.withOpacity(0.04),
+                                    borderRadius: BorderRadius.circular(40)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: SvgPicture.asset(
+                                      'assets/icons/history.svg'),
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              'About',
-                              style: TextStyle(
-                                fontFamily: "SemiBold",
-                                fontSize: 18,
-                                color: Colors.black,
+                              SizedBox(
+                                width: 10,
                               ),
-                            ),
-                          ],
+                              Text(
+                                'Order History',
+                                style: TextStyle(
+                                  fontFamily: "SemiBold",
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                     SizedBox(
                       height: getHeight(context) * 0.01,
                     ),
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Row(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: color2.withOpacity(0.04),
-                                  borderRadius: BorderRadius.circular(40)),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child:
-                                    SvgPicture.asset('assets/icons/about.svg'),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                                duration: Duration(milliseconds: 200),
+                                curve: Curves.bounceInOut,
+                                type: PageTransitionType.rightToLeft,
+                                child: About()));
+                      },
+                      child: Container(
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Row(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: color2.withOpacity(0.04),
+                                    borderRadius: BorderRadius.circular(40)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: SvgPicture.asset(
+                                      'assets/icons/about.svg'),
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              'Privacy Policy',
-                              style: TextStyle(
-                                fontFamily: "SemiBold",
-                                fontSize: 18,
-                                color: Colors.black,
+                              SizedBox(
+                                width: 10,
                               ),
-                            ),
-                          ],
+                              Text(
+                                'About',
+                                style: TextStyle(
+                                  fontFamily: "SemiBold",
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -768,7 +804,11 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                     ),
                                     StreamBuilder<QuerySnapshot>(
                                       stream: FirebaseFirestore.instance
-                                          .collection('Menu')
+                                          .collection('Recommendations')
+                                          .doc(FirebaseAuth
+                                              .instance.currentUser!.uid)
+                                          .collection('Items')
+                                          .orderBy('index', descending: true)
                                           .snapshots(),
                                       builder: ((BuildContext context,
                                           AsyncSnapshot<QuerySnapshot>
@@ -916,136 +956,141 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               child: TabBarView(controller: _tabController, children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                  child: MenuGrid(),
+                  child: MenuGrid('snack'),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                  child: MenuGrid(),
+                  child: MenuGrid('food'),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                  child: MenuGrid(),
+                  child: MenuGrid('beverage'),
                 ),
               ]),
             ),
           ),
         ),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('Carts')
-                  .doc(FirebaseAuth.instance.currentUser!.uid)
-                  .collection('Sum')
-                  .snapshots(),
-              builder: (context, snapshot1) {
-                if (!snapshot1.hasData) return Container();
-                if (snapshot1.data!.docs[0]['sum'] > 0) {
-                  return StreamBuilder<QuerySnapshot>(
+        open
+            ? Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
                         .collection('Carts')
                         .doc(FirebaseAuth.instance.currentUser!.uid)
-                        .collection('Items')
+                        .collection('Sum')
                         .snapshots(),
-                    builder: (context, snapshot) {
-                      try {
-                        if (snapshot.hasError) return Container();
-                        if (!snapshot.hasData) return Container();
-                        if (snapshot.data!.docs.length != 0) {
-                          return Container(
-                            height: 80,
-                            width: getWidth(context),
-                            color: color,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 28.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  StreamBuilder<QuerySnapshot>(
-                                      stream: FirebaseFirestore.instance
-                                          .collection('Carts')
-                                          .doc(FirebaseAuth
-                                              .instance.currentUser!.uid)
-                                          .collection('Sum')
-                                          .snapshots(),
-                                      builder: (context, snapshot2) {
-                                        if (!snapshot2.hasData)
-                                          return Container();
-                                        return Row(
-                                          children: [
-                                            Text(
-                                              '₹ ${snapshot2.data!.docs[0]['sum'].toString()}',
-                                              style: TextStyle(
-                                                  fontFamily: 'SemiBold',
-                                                  color: Colors.white,
-                                                  fontSize: 36),
+                    builder: (context, snapshot1) {
+                      if (!snapshot1.hasData) return Container();
+                      if (snapshot1.data!.docs[0]['sum'] > 0) {
+                        return StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('Carts')
+                              .doc(FirebaseAuth.instance.currentUser!.uid)
+                              .collection('Items')
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            try {
+                              if (snapshot.hasError) return Container();
+                              if (!snapshot.hasData) return Container();
+                              if (snapshot.data!.docs.length != 0) {
+                                return Container(
+                                  height: 80,
+                                  width: getWidth(context),
+                                  color: color,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 28.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        StreamBuilder<QuerySnapshot>(
+                                            stream: FirebaseFirestore.instance
+                                                .collection('Carts')
+                                                .doc(FirebaseAuth
+                                                    .instance.currentUser!.uid)
+                                                .collection('Sum')
+                                                .snapshots(),
+                                            builder: (context, snapshot2) {
+                                              if (!snapshot2.hasData)
+                                                return Container();
+                                              return Row(
+                                                children: [
+                                                  Text(
+                                                    '₹ ${snapshot2.data!.docs[0]['sum'].toString()}',
+                                                    style: TextStyle(
+                                                        fontFamily: 'SemiBold',
+                                                        color: Colors.white,
+                                                        fontSize: 36),
+                                                  ),
+                                                  Text(
+                                                    '    ${snapshot2.data!.docs[0]['quantity'].toString()} items',
+                                                    style: TextStyle(
+                                                        fontFamily: 'SemiBold',
+                                                        color: Colors.white
+                                                            .withOpacity(0.8),
+                                                        fontSize: 20),
+                                                  )
+                                                ],
+                                              );
+                                            }),
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              PageTransition(
+                                                  duration: Duration(
+                                                      milliseconds: 200),
+                                                  curve: Curves.bounceInOut,
+                                                  type: PageTransitionType
+                                                      .rightToLeft,
+                                                  child: OrderPage()),
+                                            );
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(60),
                                             ),
-                                            Text(
-                                              '    ${snapshot2.data!.docs[0]['quantity'].toString()} items',
-                                              style: TextStyle(
-                                                  fontFamily: 'SemiBold',
-                                                  color: Colors.white
-                                                      .withOpacity(0.8),
-                                                  fontSize: 20),
-                                            )
-                                          ],
-                                        );
-                                      }),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        PageTransition(
-                                            duration:
-                                                Duration(milliseconds: 200),
-                                            curve: Curves.bounceInOut,
-                                            type:
-                                                PageTransitionType.rightToLeft,
-                                            child: OrderPage()),
-                                      );
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(60),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 24.0, vertical: 16),
-                                        child: Text(
-                                          'View Cart',
-                                          style: TextStyle(
-                                              fontFamily: 'SemiBold',
-                                              color: color,
-                                              fontSize: 16),
-                                        ),
-                                      ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 24.0,
+                                                      vertical: 16),
+                                              child: Text(
+                                                'View Cart',
+                                                style: TextStyle(
+                                                    fontFamily: 'SemiBold',
+                                                    color: color,
+                                                    fontSize: 16),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        } else {
-                          return Container();
-                        }
-                      } catch (e) {
-                        print('e--${e}');
-                        return Container();
+                                  ),
+                                );
+                              } else {
+                                return Container();
+                              }
+                            } catch (e) {
+                              print('e--${e}');
+                              return Container();
+                            }
+                          },
+                        );
+                      } else {
+                        return Container(
+                          height: 0,
+                        );
                       }
-                    },
-                  );
-                } else {
-                  return Container(
-                    height: 0,
-                  );
-                }
-              }),
-        ),
+                    }),
+              )
+            : Container(),
       ]),
     );
   }

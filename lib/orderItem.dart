@@ -84,39 +84,44 @@ class _OrderItemState extends State<OrderItem> {
                         InkWell(
                           onTap: () async {
                             int prev = widget.quantity;
-                            await FirebaseFirestore.instance
-                                .collection('Carts')
-                                .doc(FirebaseAuth.instance.currentUser!.uid)
-                                .collection('Items')
-                                .doc(widget.id)
-                                .update({'quantity': FieldValue.increment(-1)});
-                            try {
+                            if (prev == 0) {
+                            } else {
                               await FirebaseFirestore.instance
-                                  .collection('Carts')
-                                  .doc(FirebaseAuth.instance.currentUser!.uid)
-                                  .collection('Sum')
-                                  .doc('0')
-                                  .update({
-                                'sum': FieldValue.increment(
-                                    -int.parse(widget.price)),
-                                'quantity': FieldValue.increment(-1)
-                              });
-                            } catch (e) {}
-
-                            if (prev == 1) {
-                              FirebaseFirestore.instance
                                   .collection('Carts')
                                   .doc(FirebaseAuth.instance.currentUser!.uid)
                                   .collection('Items')
                                   .doc(widget.id)
-                                  .delete();
-                              // FirebaseFirestore.instance
-                              //     .collection('Carts')
-                              //     .doc(FirebaseAuth.instance.currentUser!.uid)
-                              //     .collection('Sum')
-                              //     .doc('0')
-                              //     .delete();
-                              showToast('Removed ${widget.itemName} from cart');
+                                  .update(
+                                      {'quantity': FieldValue.increment(-1)});
+                              try {
+                                await FirebaseFirestore.instance
+                                    .collection('Carts')
+                                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                                    .collection('Sum')
+                                    .doc('0')
+                                    .update({
+                                  'sum': FieldValue.increment(
+                                      -int.parse(widget.price)),
+                                  'quantity': FieldValue.increment(-1)
+                                });
+                              } catch (e) {}
+
+                              if (prev == 1) {
+                                FirebaseFirestore.instance
+                                    .collection('Carts')
+                                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                                    .collection('Items')
+                                    .doc(widget.id)
+                                    .delete();
+                                // FirebaseFirestore.instance
+                                //     .collection('Carts')
+                                //     .doc(FirebaseAuth.instance.currentUser!.uid)
+                                //     .collection('Sum')
+                                //     .doc('0')
+                                //     .delete();
+                                showToast(
+                                    'Removed ${widget.itemName} from cart');
+                              }
                             }
                             /*setState(() {
                               //subtotal = subtotal - int.parse(widget.price);

@@ -210,7 +210,6 @@ class _OrderPageState extends State<OrderPage> {
                           itemBuilder: (ctx, i) {
                             Map<String, dynamic> map = snapshot.data!.docs[i]
                                 .data() as Map<String, dynamic>;
-
                             return OrderItem(
                                 map['product'],
                                 map['price'].toString(),

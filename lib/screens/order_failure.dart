@@ -34,31 +34,55 @@ class _OrderFailureState extends State<OrderFailure> {
         height: getHeight(context),
         width: getWidth(context),
         child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Column(
                 children: [
-                  Text(
-                    'Order Failed',
-                    style: TextStyle(
-                        fontFamily: 'Bold',
-                        fontSize: 34,
-                        color: Colors.red.withOpacity(0.8)),
+                  Container(
+                    height: getHeight(context) * 0.3,
+                    width: getWidth(context) * 0.6,
+                    child: Image.asset(
+                      'assets/icons/error.gif',
+                      fit: BoxFit.contain,
+                    ),
+                    /*child: AnimatedCheck(
+                    color: color,
+                    progress: _animation,
+                    size: 200,
+                  )*/
+                  ),
+                  SizedBox(
+                    height: getHeight(context) * 0.06,
+                  ),
+                  Container(
+                    width: 250,
+                    child: Text(
+                      'Your order was not placed',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Bold',
+                          fontSize: 34,
+                          color: Colors.black.withOpacity(0.8)),
+                    ),
                   ),
                   SizedBox(
                     height: 20,
                   ),
-                  Text(
-                    "There was some problem with your order",
-                    style: TextStyle(
-                        fontFamily: 'Medium',
-                        fontSize: 20,
-                        color: Colors.black.withOpacity(0.2)),
+                  Container(
+                    width: 250,
+                    child: Text(
+                      "There was some problem with your order",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Medium',
+                          fontSize: 20,
+                          color: Colors.black.withOpacity(0.2)),
+                    ),
                   ),
                 ],
               ),
-              Column(
+              /*Column(
                 children: [
                   StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
@@ -82,26 +106,29 @@ class _OrderFailureState extends State<OrderFailure> {
                             )));
                       return Container(
                         height: getHeight(context) * 0.4,
-                        width: getWidth(context),
-                        child: SingleChildScrollView(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: snapshot.data!.docs.length,
-                            itemBuilder: (ctx, i) {
-                              Map<String, dynamic> map = snapshot.data!.docs[i]
-                                  .data() as Map<String, dynamic>;
+                        width: getWidth(context) * 0.6,
+                        child: Center(
+                          child: SingleChildScrollView(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (ctx, i) {
+                                Map<String, dynamic> map =
+                                    snapshot.data!.docs[i].data()
+                                        as Map<String, dynamic>;
 
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 18.0, vertical: 2),
-                                child: OrderSuccessItem(
-                                    map['product'],
-                                    map['price'].toString(),
-                                    map['image'],
-                                    snapshot.data!.docs[i].id,
-                                    map['quantity']),
-                              );
-                            },
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 18.0, vertical: 2),
+                                  child: OrderSuccessItem(
+                                      map['product'],
+                                      map['price'].toString(),
+                                      map['image'],
+                                      snapshot.data!.docs[i].id,
+                                      map['quantity']),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       );
@@ -119,10 +146,19 @@ class _OrderFailureState extends State<OrderFailure> {
                           (route) => false);
                     },
                     child: Container(
-                      child: Text(
-                        '<  Back to home',
-                        style: TextStyle(
-                            fontFamily: 'SemiBold', color: color, fontSize: 20),
+                      decoration: BoxDecoration(
+                          color: color,
+                          borderRadius: BorderRadius.circular(40)),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 18),
+                        child: Text(
+                          '<  Back to home',
+                          style: TextStyle(
+                              fontFamily: 'SemiBold',
+                              color: Colors.white,
+                              fontSize: 14),
+                        ),
                       ),
                     ),
                   ),
@@ -130,7 +166,37 @@ class _OrderFailureState extends State<OrderFailure> {
                     height: 40,
                   )
                 ],
-              )
+              )*/
+              SizedBox(
+                height: getHeight(context) * 0.2,
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      PageTransition(
+                          duration: Duration(milliseconds: 200),
+                          curve: Curves.bounceInOut,
+                          type: PageTransitionType.rightToLeft,
+                          child: Home()),
+                      (route) => false);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: color, borderRadius: BorderRadius.circular(40)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 18),
+                    child: Text(
+                      '<  Back to home',
+                      style: TextStyle(
+                          fontFamily: 'SemiBold',
+                          color: Colors.white,
+                          fontSize: 14),
+                    ),
+                  ),
+                ),
+              ),
             ]),
       ),
     );

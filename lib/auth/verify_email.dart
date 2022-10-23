@@ -64,43 +64,47 @@ class _VerifyEmailState extends State<VerifyEmail> {
       body: Column(
         children: [
           Container(
-            height: getHeight(context) * 0.6,
-            width: getWidth(context),
-            decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                image: DecorationImage(
-                    colorFilter: ColorFilter.mode(
-                        Colors.black.withOpacity(0.2), BlendMode.srcOver),
-                    fit: BoxFit.cover,
-                    image: AssetImage('assets/images/chai2.jpg'))),
+            height: getHeight(context) * 0.26,
           ),
           Container(
-            height: getHeight(context) * 0.4,
+            height: getHeight(context) * 0.3,
+            width: getWidth(context) * 0.5,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                image: DecorationImage(
+                    fit: BoxFit.contain,
+                    image: AssetImage('assets/icons/email.gif'))),
+          ),
+          Container(
+            height: getHeight(context) * 0.2,
             width: getWidth(context),
             child: Padding(
               padding: const EdgeInsets.all(36.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CircularProgress(
-                        size: 30,
-                        color: color,
-                      ),
-                      Container(
-                        width: getWidth(context) * 0.6,
-                        child: Text(
-                          'Please check your email for verification link',
-                          style: TextStyle(
-                              fontFamily: 'Bold',
-                              color: Colors.black.withOpacity(0.8),
-                              fontSize: 30),
-                        ),
-                      ),
-                    ],
+                  Container(
+                    width: getWidth(context) * 0.6,
+                    child: Text(
+                      'Please check your email for verification link',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Bold',
+                          color: Colors.black.withOpacity(0.8),
+                          fontSize: 26),
+                    ),
+                  ),
+                  Container(
+                    width: getWidth(context) * 0.6,
+                    child: Text(
+                      "Don't forget your spam",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'SemiBold',
+                          color: Colors.black.withOpacity(0.2),
+                          fontSize: 22),
+                    ),
                   ),
                 ],
               ),

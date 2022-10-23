@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:wit_canteen_app/auth/sign_up.dart';
@@ -152,6 +153,8 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                                       child: Home()),
                                   (route) => false);
                             } else {
+                              final fcmToken =
+                                  await FirebaseMessaging.instance.getToken();
                               await FirebaseFirestore.instance
                                   .collection('Users')
                                   .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -162,7 +165,8 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                                 'id': null,
                                 'name': null,
                                 'phone': null,
-                                'userType': null
+                                'userType': null,
+                                'fcm': fcmToken
                               });
                               await FirebaseFirestore.instance
                                   .collection('Users')

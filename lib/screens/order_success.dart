@@ -61,7 +61,7 @@ class _OrderSuccessState extends State<OrderSuccess>
                     height: getHeight(context) * 0.3,
                     width: getWidth(context) * 0.6,
                     child: Image.asset(
-                      'assets/images/order_placed.png',
+                      'assets/icons/order_placed.gif',
                       fit: BoxFit.contain,
                     ),
                     /*child: AnimatedCheck(

@@ -531,11 +531,11 @@ class _SignUpState extends State<SignUp> {
                                   'userType': userType
                                 });
                                 await FirebaseFirestore.instance
-              .collection('Carts')
-              .doc(FirebaseAuth.instance.currentUser!.uid)
-              .collection('Sum')
-              .doc('0')
-              .set({'sum': 0, 'quantity': 0});
+                                    .collection('Carts')
+                                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                                    .collection('Sum')
+                                    .doc('0')
+                                    .set({'sum': 0, 'quantity': 0});
                                 await FirebaseFirestore.instance
                                     .collection("Menu")
                                     .get()
@@ -546,7 +546,7 @@ class _SignUpState extends State<SignUp> {
                                         .doc(FirebaseAuth
                                             .instance.currentUser!.uid)
                                         .collection('Items')
-                                        .doc(doc.data()['product'])
+                                        .doc(doc.id)
                                         .set({
                                       'product': doc.data()['product'],
                                       'image': doc.data()['image'],

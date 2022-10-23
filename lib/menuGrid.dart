@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:wit_canteen_app/menuitem.dart';
 
 class MenuGrid extends StatelessWidget {
+  final type;
+  const MenuGrid(this.type);
   /*
   List<Menuitem> listOfItems = <Menuitem>[
     Menuitem('Vadapav', "15", 'assets/images/vadapav.jpg'),
@@ -16,7 +18,10 @@ class MenuGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('Menu').snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('Menu')
+          .where('type', isEqualTo: type)
+          .snapshots(),
       builder: ((BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) return const SizedBox.shrink();
         int count = snapshot.data!.docs.length;
@@ -28,7 +33,7 @@ class MenuGrid extends StatelessWidget {
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
             childAspectRatio: 9 / 11.6,
-            padding: EdgeInsets.all(5),
+            padding: EdgeInsets.only(bottom: 90, top: 10),
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
             children: List.generate(count, (index) {

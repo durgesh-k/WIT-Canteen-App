@@ -72,14 +72,20 @@ Future<void> pay(BuildContext context, String amount, String cartId) async {
                   .doc(orderId.toString())
                   .collection('Items')
                   .add(doc.data());
+              /*FirebaseFirestore.instance
+                  .collection("Recommendations")
+                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                  .collection('Items')
+                  .doc(doc.data()['product'])
+                  .set({'index': FieldValue.increment(doc.data()['quantity'])});*/
             });
-            Navigator.push(
+            /*Navigator.push(
                 context,
                 PageTransition(
                     duration: Duration(milliseconds: 200),
                     curve: Curves.bounceInOut,
                     type: PageTransitionType.rightToLeft,
-                    child: OrderSuccess()));
+                    child: OrderSuccess()));*/
           });
 
           await FirebaseFirestore.instance
@@ -93,19 +99,19 @@ Future<void> pay(BuildContext context, String amount, String cartId) async {
                   .collection("Recommendations")
                   .doc(FirebaseAuth.instance.currentUser!.uid)
                   .collection('Items')
-                  .doc(doc.data()['product'])
+                  .doc(doc.id)
                   .update({
-                'index': FieldValue.increment(1),
+                'index': FieldValue.increment(doc.data()['quantity']),
               });
             });
 
-            Navigator.push(
+            Navigator.pushReplacement(
                 context,
                 PageTransition(
                     duration: Duration(milliseconds: 200),
                     curve: Curves.bounceInOut,
                     type: PageTransitionType.rightToLeft,
-                    child: OrderSuccess()));
+                    child: OrderFailure()));
           });
 
           await FirebaseFirestore.instance
@@ -180,16 +186,18 @@ Future<String> cancelOrder(num amount, String orderId) async {
     Uri.parse("https://test.cashfree.com/api/v1/order/refund"),
     headers: <String, String>{
       'Content-Type': 'application/json',
-      'x-client-id': "1733509887cbd3f118d5c96f4c053371",
+      /*'x-client-id': "1733509887cbd3f118d5c96f4c053371",
       'x-client-secret': "7c5b6a873fad7730fa3bceab3d39ef22cd99e632",
       'Accept': "application/json",
-      'x-api-version': "2022-01-01"
+      'x-api-version': "2022-01-01"*/
     },
     body: jsonEncode(
       {
-        "refund_id": '${orderId}',
-        "refund_amount": amount,
-        "refund_note": "refund for order k0v-vK1jv34"
+        'appId': '1733509887cbd3f118d5c96f4c053371',
+        'secretKey': '7c5b6a873fad7730fa3bceab3d39ef22cd99e632',
+        "referenceId": '${orderId}',
+        "refundAmount": amount,
+        "refundNote": "refund for order k0v-vK1jv34"
       },
     ),
   );
