@@ -111,7 +111,7 @@ Future<void> pay(BuildContext context, String amount, String cartId) async {
                     duration: Duration(milliseconds: 200),
                     curve: Curves.bounceInOut,
                     type: PageTransitionType.rightToLeft,
-                    child: OrderFailure()));
+                    child: OrderSuccess()));
           });
 
           await FirebaseFirestore.instance

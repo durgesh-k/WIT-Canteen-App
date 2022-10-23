@@ -39,7 +39,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
               duration: Duration(milliseconds: 200),
               curve: Curves.bounceInOut,
               type: PageTransitionType.rightToLeft,
-              child: Home()),
+              child: IDupload()),
           (route) => false);
     }
   }
